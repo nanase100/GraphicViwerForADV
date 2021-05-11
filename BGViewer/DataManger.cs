@@ -121,20 +121,20 @@ namespace GraphicViewer
 
 	public class TabBackupDat
 	{
-		public string	m_tabName	{set;get; }
-		public int		m_Opt1No	{set;get; }
-		public int		m_Opt2No	{set;get; }
-        public int      m_Opt3No     { set; get; }
-        public int      m_Opt4No     { set; get; }
-        public int		m_CopyNo	{set;get; }
-		public int		m_CCPNo		{set;get; }
+		public string	m_tabName	{set;get;}
+		public int		m_Opt1No	{set;get;}
+		public int		m_Opt2No	{set;get;}
+        public int      m_Opt3No    {set;get;}
+        public int      m_Opt4No    {set;get;}
+        public int		m_CopyNo	{set;get;}
+		public int		m_CCPNo		{set;get;}
 
 		public TabBackupDat( string tabName, int opt1No, int opt2No, int opt3No, int opt4No, int copyNo, int ccpNo ){
 			m_tabName	= tabName;
 			m_Opt1No	= opt1No;
 			m_Opt2No	= opt2No;
-            m_Opt3No = opt3No;
-            m_Opt4No = opt4No;
+            m_Opt3No	= opt3No;
+            m_Opt4No	= opt4No;
             m_CopyNo	= copyNo;
 			m_CCPNo		= ccpNo;
 
@@ -174,8 +174,8 @@ namespace GraphicViewer
 
 		public string[]							    m_optionString			{ set; get; }
         public string[]                             m_optionStringLv2       { set; get; }
-        public string[]                             m_optionStringLv3 { set; get; }
-        public string[]                             m_optionStringLv4 { set; get; }
+        public string[]                             m_optionStringLv3		{ set; get; }
+        public string[]                             m_optionStringLv4		{ set; get; }
 
         public int                                  m_left                  { set; get; }
 		public int                                  m_top                   { set; get; }
@@ -193,7 +193,7 @@ namespace GraphicViewer
 		public List<TabBackupDat>					m_tabBackupDat			{ set; get; } = new List<TabBackupDat>();
 																						
 		public int									m_globalHookUse			{ set; get; } = 0;
-        public int                                   m_isSHowExText {  set; get; } = 0;
+        public int                                   m_isSHowExText			{ set; get; } = 0;
 
 		public readJsonType1	jsonData			{ set; get; }
 
@@ -276,9 +276,10 @@ namespace GraphicViewer
 				{
 					System.Windows.Forms.MessageBox.Show( "option.txt,または_option.txtが shift-jis で保存されています。\noption.txtは utf-8 で保存してください。" );
 				}
-			
+
 				jsonData = JsonConvert.DeserializeObject<readJsonType1>(File.ReadAllText(settingFilePath));
-				
+				jsonData.Create();
+
 				m_thumbnailWidth	= jsonData.サムネイルサイズ[0];
 				m_thumbnailHeight	= jsonData.サムネイルサイズ[1];
 				m_summaryFontSize	= jsonData.フォントサイズ;
@@ -288,12 +289,11 @@ namespace GraphicViewer
 				m_bigThumbnailHeight = jsonData.大型サムネイルサイズ[1];	
 				
 				//window座標とか
-
-				m_left      = jsonData.ウインドウ座標[0];
-				m_top       = jsonData.ウインドウ座標[1];
-				m_width     = jsonData.ウインドウ座標[2];
-				m_height    = jsonData.ウインドウ座標[3];
-				m_splitSize = jsonData.画面分割幅;
+				m_left				= jsonData.ウインドウ座標[0];
+				m_top				= jsonData.ウインドウ座標[1];
+				m_width				= jsonData.ウインドウ座標[2];
+				m_height			= jsonData.ウインドウ座標[3];
+				m_splitSize			= jsonData.画面分割幅;
 
 				//コピー文関連
 				m_copyString1		= jsonData.コピー文[0];
@@ -347,8 +347,6 @@ namespace GraphicViewer
                     m_optionStringLv4[i] = m_optionStringLv4[i].Replace("\n", System.Environment.NewLine);
                     m_optionStringLv4[i] = m_optionStringLv4[i].Replace("\t", "	");
                 }
-                
-
 
                 //ツールオプションのon/off
                 for ( int i = 0; i < m_toolOption.Count; i++ )
@@ -357,7 +355,6 @@ namespace GraphicViewer
 				}
 				
 				//ヒストリーウインドウの情報
-
 				m_historyLeft		= jsonData.履歴ウインドウ座標[0];
 				m_historyTop		= jsonData.履歴ウインドウ座標[1];
 				m_historyWidth		= jsonData.履歴ウインドウ座標[2];
@@ -471,7 +468,6 @@ namespace GraphicViewer
 		//-----------------------------------------------------------------------------------
 		public void Load(string settingFilePath,string graphicDirectoryPath)
 		{
-
 			string		buff				= "";
 			string		nowGenre			= "ジャンル未定";
 			string		nowTotalGenre		= "";
@@ -507,7 +503,6 @@ namespace GraphicViewer
 			Regex		regGenreRectColorExpandPlus = new Regex( "\t*※(.*),(.*),(.*),(.*),(.*),#(..)(..)(..),(.*),(.*),(.*)");			//ジャンル名, 顔座標x, y, w, h, 文字色(#000000), ツリーを開いおくフラグ, 大型サムネイル使用するか、CCP構造を利用するか
 			
 			Regex		regGenreSeparator			= new Regex( "\t*_※(.*)");
-
 
 			Rectangle	faceRect;
 			Match		matchResult, matchResult2, matchResult3, matchResult4;
@@ -864,29 +859,48 @@ namespace GraphicViewer
 			{
 				if(isCreate )
 				{	 
-				
+					Create();
+
+				}
+			}
+
+			public void Create()
+			{
+				if (サムネイルサイズ.Count == 0)
+				{
 					サムネイルサイズ.Add(160);
 					サムネイルサイズ.Add(90);
+				}
 
-					フォントサイズ=8;
+				フォントサイズ = 8;
 
+				if (大型サムネイルサイズ.Count == 0)
+				{
 					大型サムネイルサイズ.Add(350);
-					大型サムネイルサイズ.Add( 430);
-
-					ウインドウ座標.Add( 0 );
+					大型サムネイルサイズ.Add(430);
+				}
+				if (ウインドウ座標.Count == 0)
+				{
+					ウインドウ座標.Add(0);
 					ウインドウ座標.Add(0);
 					ウインドウ座標.Add(640);
 					ウインドウ座標.Add(480);
+				}
 
-					画面分割幅 = 280;
-
+				画面分割幅 = 280;
+				if (履歴ウインドウ座標.Count == 0)
+				{
 					履歴ウインドウ座標.Add(1020);
 					履歴ウインドウ座標.Add(2);
 					履歴ウインドウ座標.Add(330);
 					履歴ウインドウ座標.Add(400);
+				}
 
-					履歴ウインドウ接続位置 = 1;
-				
+				履歴ウインドウ接続位置 = 1;
+
+				if (コピー文.Count == 0)
+				{
+
 					コピー文.Add("	%Ev_sb %q");
 					コピー文.Add("	%q\n	rdraw 30");
 					コピー文.Add("	bg 0 %q");
@@ -896,13 +910,17 @@ namespace GraphicViewer
 					コピー文.Add("");
 					コピー文.Add("");
 					コピー文.Add("");
-
+				}
+				if (置き換えテキストA.Count == 0)
+				{
 					置き換えテキストA.Add("");
 					置き換えテキストA.Add("");
 					置き換えテキストA.Add("");
 					置き換えテキストA.Add("");
 					置き換えテキストA.Add("");
-
+				}
+				if (置き換えテキストB.Count == 0)
+				{
 					置き換えテキストB.Add("");
 					置き換えテキストB.Add("");
 					置き換えテキストB.Add("");
@@ -913,7 +931,9 @@ namespace GraphicViewer
 					置き換えテキストB.Add("");
 					置き換えテキストB.Add("");
 					置き換えテキストB.Add("");
-
+				}
+				if (置き換えテキストC.Count == 0)
+				{
 					置き換えテキストC.Add("");
 					置き換えテキストC.Add("");
 					置き換えテキストC.Add("");
@@ -924,7 +944,9 @@ namespace GraphicViewer
 					置き換えテキストC.Add("");
 					置き換えテキストC.Add("");
 					置き換えテキストC.Add("");
-
+				}
+				if (置き換えテキストD.Count == 0)
+				{
 					置き換えテキストD.Add("");
 					置き換えテキストD.Add("");
 					置き換えテキストD.Add("");
@@ -935,21 +957,26 @@ namespace GraphicViewer
 					置き換えテキストD.Add("");
 					置き換えテキストD.Add("");
 					置き換えテキストD.Add("");
-
-
-
+				}
+				if (機能オプションONOFF.Count == 0)
+				{
 					機能オプションONOFF.Add(true);
 					機能オプションONOFF.Add(true);
 					機能オプションONOFF.Add(false);
 					機能オプションONOFF.Add(true);
 					機能オプションONOFF.Add(false);
+				}
+
+				//タブ履歴
+				グローバル呼び出し機能 = 0;
+				拡張置き換えテキスト表示 = 0;
 			}
 
-		}
-
 	};
+
 		public class tabHistory{
 			public string タブ名{ get; set; } 
 			public List<int> オプション{ get; set; } = new List<int>(); 
 		};
 }
+	
