@@ -2094,6 +2094,9 @@ namespace GraphicViewer
 			versionText += Environment.NewLine + "ver 1.1.9：21-05-10：" + Environment.NewLine + "option.txt の内容を初期設定で上書きしてしまう場合があるのを修正。";
 			versionText += Environment.NewLine;
 			versionText += Environment.NewLine + "ver 1.1.10：21-05-11：" + Environment.NewLine + "option.txt のタブ履歴に存在しないタブがあった場合のエラーを修正。";
+			versionText += Environment.NewLine;
+			versionText += Environment.NewLine + "ver 1.1.11：21-05-11：" + Environment.NewLine + "古いoption.txtに対応" +
+				"、graphic.txtのエラー箇所を表示するように修正。";
 
 			System.Windows.Forms.MessageBox.Show( versionText, "GraphicViewer バージョン情報" );
 		}
