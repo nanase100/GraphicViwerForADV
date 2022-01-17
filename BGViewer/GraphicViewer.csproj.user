@@ -3,8 +3,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <StartArguments>
     </StartArguments>
-    <StartWorkingDirectory>D:\終了したプロジェクト\搾精病棟\svn\_report\立ち絵ビューワー</StartWorkingDirectory>
+    <StartWorkingDirectory>D:\戦国恋姫EX 立ち絵ツール\</StartWorkingDirectory>
     <RemoteDebugEnabled>false</RemoteDebugEnabled>
+    <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <StartArguments>

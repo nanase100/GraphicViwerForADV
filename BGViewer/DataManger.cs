@@ -33,9 +33,9 @@ namespace GraphicViewer
 
 		public List<string> m_dirList { set; get; } = new List<string>();
 
-		public int m_useBig { set; get; }
+		public bool m_useBig { set; get; }
 
-		public DataSet(string fileName, string summary, string genre, bool isLineFeed = false, int x = 0, int y = 0, int w = 0, int h = 0, string copyStr = "", int r = 255, int g = 255, int b = 255)
+		public DataSet(string fileName, string summary, string genre, bool isLineFeed = false, int x = 0, int y = 0, int w = 0, int h = 0, string copyStr = "", int r = 255, int g = 255, int b = 255, bool isBig = false)
 		{
 			m_fileName = fileName;
 			m_summary = summary;
@@ -60,7 +60,7 @@ namespace GraphicViewer
 				m_isLineFeed = true;
 			}
 
-			if (isLineFeed) m_useBig = 1;
+			m_useBig = isBig;
 
 			m_cutRect = new Rectangle(x, y, w, h);
 			m_copyStr = copyStr;
@@ -84,7 +84,7 @@ namespace GraphicViewer
 
 		public List<string> m_dirList { set; get; } = new List<string>();
 
-		public bool m_C_C_P_Flg { set; get; }           //立ち絵でキャラ-服装-ポーズの
+		public bool m_CCPFlg { set; get; }           //立ち絵でキャラ-服装-ポーズの
 
 		public GenreTree()
 		{
@@ -117,7 +117,7 @@ namespace GraphicViewer
 			m_treenodeColor = Color.FromArgb(r, g, b);
 			m_autoExpand = expand;
 			m_useBigThumbnail = useBig;
-			m_C_C_P_Flg = ccpFlg;
+			m_CCPFlg = ccpFlg;
 		}
 	}
 
@@ -196,7 +196,6 @@ namespace GraphicViewer
 		public List<TabBackupDat> m_tabBackupDat { set; get; } = new List<TabBackupDat>();
 
 		public int m_globalHookUse { set; get; } = 0;
-		public int m_isSHowExText { set; get; } = 0;
 
 		public readJsonType1 jsonData { set; get; }
 
@@ -251,12 +250,16 @@ namespace GraphicViewer
 			m_historyHeight = 400;
 			m_historyPosType = 0;
 
-			m_toolOption = new List<int>();
-			m_toolOption.Add(0);
-			m_toolOption.Add(0);
-			m_toolOption.Add(0);
-			m_toolOption.Add(0);
-			m_toolOption.Add(0);
+			m_toolOption = new List<int>
+			{
+				0,
+				0,
+				0,
+				0,
+				0,
+				0,
+				0
+			};
 
 		}
 
@@ -372,7 +375,6 @@ namespace GraphicViewer
 				}
 
 				m_globalHookUse = jsonData.グローバル呼び出し機能;
-				m_isSHowExText = jsonData.拡張置き換えテキスト表示;
 
 			}
 
@@ -437,18 +439,19 @@ namespace GraphicViewer
 			{
 				tmpData = new tabHistory();
 				tmpData.タブ名 = data.m_tabName;
-				tmpData.オプション = new List<int>();
-				tmpData.オプション.Add(data.m_Opt1No);
-				tmpData.オプション.Add(data.m_Opt2No);
-				tmpData.オプション.Add(data.m_Opt3No);
-				tmpData.オプション.Add(data.m_Opt4No);
-				tmpData.オプション.Add(data.m_CopyNo);
-				tmpData.オプション.Add(data.m_CCPNo);
+				tmpData.オプション = new List<int>
+				{
+					data.m_Opt1No,
+					data.m_Opt2No,
+					data.m_Opt3No,
+					data.m_Opt4No,
+					data.m_CopyNo,
+					data.m_CCPNo
+				};
 				jsonData.タブ履歴.Add(tmpData);
 			}
 
 			jsonData.グローバル呼び出し機能 = m_globalHookUse;
-			jsonData.拡張置き換えテキスト表示 = m_isSHowExText;
 
 			var outputStr = JsonConvert.SerializeObject(jsonData);
 
@@ -470,7 +473,7 @@ namespace GraphicViewer
 		//-----------------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------------
-		public void Load(string settingFilePath, string graphicDirectoryPath)
+		public void Load(string settingFilePath)
 		{
 			string buff = "";
 			string nowGenre = "ジャンル未定";
@@ -480,30 +483,32 @@ namespace GraphicViewer
 			GenreTree eraseGenre = tmpGenreItme;
 			GenreTree paerentGenreItem = null;
 
+			System.Collections.Hashtable htGanreItemCount = new System.Collections.Hashtable();
+
+
 			m_genreMaster.Add(nowGenre);
 			m_dataByGenre.Add(nowGenre, new List<DataSet>());
 
 			m_genreTreeMaster.Add(tmpGenreItme);
 			m_genreTreeByGenreName[tmpGenreItme.m_genreName] = tmpGenreItme;
 
-			//フォルダ内の列挙
-			string[] fileList = System.IO.Directory.GetFiles(graphicDirectoryPath, "*.png", System.IO.SearchOption.AllDirectories);
+			
 
 			int R = 0, G = 0, B = 0;
 
 			//リストの読み込み
 			Regex regIgnore = new Regex("^\t*([^\r\n\"]*?)[\t ]*//.*");
-			Regex regLine = new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*)");                                                      //基本の顔グラ
-			Regex regLine2 = new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*\"([^\r\n\"]*)\"");                                     //コピーストリング付きカオ
-			Regex regLine3 = new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*#(..)(..)(..)");                                                        //基本の顔グラ
-			Regex regLine4 = new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*\"(.*)\",[ \t]*#(..)(..)(..)");                                     //コピーストリング付きカオ
-			Regex regLine5 = new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*)");                           //個別かお切り出し位置付き
-			Regex regLine6 = new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]+?),[ \t]*\"([^\r\n\"]*)\"");           //主にユーリス用 ファイル名ではなく、テキストを置き換え文に使用
+			Regex regLine	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*)");                                                      //基本の顔グラ
+			Regex regLine2	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*\"([^\r\n\"]*)\"");                                     //コピーストリング付きカオ
+			Regex regLine3	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*#(..)(..)(..)");                                                        //基本の顔グラ
+			Regex regLine4	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*\"(.*)\",[ \t]*#(..)(..)(..)");                                     //コピーストリング付きカオ
+			Regex regLine5	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*)");                           //個別かお切り出し位置付き
+			Regex regLine6	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]+?),[ \t]*\"([^\r\n\"]*)\"");           //主にユーリス用 ファイル名ではなく、テキストを置き換え文に使用
 
-			Regex regGenre = new Regex("\t*※(.*)");
-			Regex regGenreRect = new Regex("\t*※(.*),(.*),(.*),(.*),(.*)");                                     //ジャンル名, 顔座標x, y, w, h		
-			Regex regGenreStrColor = new Regex("\t*※(.*),#(..)(..)(..)");                                           //ジャンル名, 文字色(#000000)
-			Regex regGenreRectColorExpand = new Regex("\t*※(.*),(.*),(.*),(.*),(.*),#(..)(..)(..),(.*),(.*)");              //ジャンル名, 顔座標x, y, w, h, 文字色(#000000), ツリーを開いおくフラグ, 大型サムネイル使用するか
+			Regex regGenre					= new Regex("\t*※(.*)");
+			Regex regGenreRect				= new Regex("\t*※(.*),(.*),(.*),(.*),(.*)");                                     //ジャンル名, 顔座標x, y, w, h		
+			Regex regGenreStrColor			= new Regex("\t*※(.*),#(..)(..)(..)");                                           //ジャンル名, 文字色(#000000)
+			Regex regGenreRectColorExpand	= new Regex("\t*※(.*),(.*),(.*),(.*),(.*),#(..)(..)(..),(.*),(.*)");              //ジャンル名, 顔座標x, y, w, h, 文字色(#000000), ツリーを開いおくフラグ, 大型サムネイル使用するか
 			Regex regGenreRectColorExpandPlus = new Regex("\t*※(.*),(.*),(.*),(.*),(.*),#(..)(..)(..),(.*),(.*),(.*)");         //ジャンル名, 顔座標x, y, w, h, 文字色(#000000), ツリーを開いおくフラグ, 大型サムネイル使用するか、CCP構造を利用するか
 
 			Regex regGenreSeparator = new Regex("\t*_※(.*)");
@@ -522,6 +527,7 @@ namespace GraphicViewer
 
 			try
 			{
+
 				using (System.IO.StreamReader fileReader = new System.IO.StreamReader(settingFilePath, System.Text.Encoding.GetEncoding("shift_jis")))
 				{
 					while (true)
@@ -637,7 +643,7 @@ namespace GraphicViewer
 
 								tmpGenreItme = new GenreTree(nowGenre, nowTotalGenreSplit, paerentGenreItem, R, G, B, isAutoExpand, isUseBig, isCCPFlg);
 
-								openMarkCount++;
+							openMarkCount++;
 
 								if (paerentGenreItem != null)
 								{
@@ -805,10 +811,24 @@ namespace GraphicViewer
 							tmpData = new DataSet(matchResult.Groups[1].Value, matchResult.Groups[2].Value, nowTotalGenreSplit, false, int.Parse(matchResult.Groups[3].Value), int.Parse(matchResult.Groups[4].Value), int.Parse(matchResult.Groups[5].Value), int.Parse(matchResult.Groups[6].Value), matchResult.Groups[7].Value);
 						}
 
+						if( htGanreItemCount.Contains(nowTotalGenreSplit) )
+						{
+							htGanreItemCount[nowTotalGenreSplit] = (int)(htGanreItemCount[nowTotalGenreSplit])+1;
+						}
+						else
+						{
+							htGanreItemCount[nowTotalGenreSplit] = 0;
+							tmpData.m_useBig = true;
+						}
+
 						m_dataMaster.Add(tmpData);
+
+						//大分無理やりながらここで大サイズフラグを個別のサムネに立てよう
+						//if (m_dataByGenre[nowTotalGenre].Count)
 
 						m_dataByGenre[nowTotalGenre].Add(tmpData);
 
+						
 
 					}
 
@@ -870,7 +890,6 @@ namespace GraphicViewer
 
 		public List<tabHistory> タブ履歴 { get; set; } = new List<tabHistory>();
 		public int グローバル呼び出し機能 { get; set; } = 0;
-		public int 拡張置き換えテキスト表示 { get; set; } = 0;
 
 		public readJsonType1(bool isCreate = false)
 		{
@@ -982,11 +1001,12 @@ namespace GraphicViewer
 				機能オプションONOFF.Add(false);
 				機能オプションONOFF.Add(true);
 				機能オプションONOFF.Add(false);
+				機能オプションONOFF.Add(false);
+				機能オプションONOFF.Add(false);
 			}
 
 			//タブ履歴
 			グローバル呼び出し機能 = 0;
-			拡張置き換えテキスト表示 = 0;
 		}
 
 	};

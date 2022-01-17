@@ -32,22 +32,24 @@ namespace GraphicViewer
 		internal static extern int SendMessage(IntPtr hwnd,					   int msg,			   int wParam,			  [MarshalAs(UnmanagedType.LPWStr)] StringBuilder lParam);
 
 		internal const int
-  LBN_SELCHANGE = 0x00000001,
-  WM_COMMAND = 0x00000111,
-  LB_GETCURSEL = 0x00000188,
-  LB_GETTEXTLEN = 0x0000018A,
-  LB_ADDSTRING = 0x00000180,
-  LB_GETTEXT = 0x00000189,
-  LB_DELETESTRING = 0x00000182,
-  LB_GETCOUNT = 0x0000018B;
+		LBN_SELCHANGE	= 0x00000001,
+		WM_COMMAND		= 0x00000111,
+		LB_GETCURSEL	= 0x00000188,
+		LB_GETTEXTLEN	= 0x0000018A,
+		LB_ADDSTRING	= 0x00000180,
+		LB_GETTEXT		= 0x00000189,
+		LB_DELETESTRING	= 0x00000182,
+		LB_GETCOUNT		= 0x0000018B;
 
 		IntPtr gamehWnd = IntPtr.Zero;
 		IntPtr filehWnd = IntPtr.Zero;
 		IntPtr debughWnd = IntPtr.Zero;
 
 
+		
+	
 
-			
+
 
 
 
@@ -202,6 +204,8 @@ namespace GraphicViewer
 			m_dataManager.m_toolOption[2]	= (menuItemSub3.Checked == true ? 1 : 0 );
 			m_dataManager.m_toolOption[3]	= (menuItemSub4.Checked == true ? 1 : 0 );
 			m_dataManager.m_toolOption[4]	= (menuItemSub5.Checked == true ? 1 : 0 );
+			m_dataManager.m_toolOption[5]	= (menuItemSub6.Checked == true ? 1 : 0);
+			m_dataManager.m_toolOption[6]	= (menuItemSub7.Checked == true ? 1 : 0);
 
 			m_dataManager.m_globalHookUse	= menuComboBox1.SelectedIndex;
 
@@ -253,7 +257,7 @@ namespace GraphicViewer
 			m_form3.Show();
 			m_form3.m_imgManager	= this.m_imgManager;
 			
-			m_form3.m_copyString = textBox3.Text;
+			m_form3.m_copyString	= textBox3.Text;
 
 			radioButton1.Checked  = true;
 			radioButton10.Checked = true;
@@ -265,11 +269,12 @@ namespace GraphicViewer
 			menuItemSub3.Checked =	(m_dataManager.m_toolOption[2] == 1 ? true : false );
 			menuItemSub4.Checked =	(m_dataManager.m_toolOption[3] == 1 ? true : false );
 			menuItemSub5.Checked =	(m_dataManager.m_toolOption[4] == 1 ? true : false );
+			menuItemSub6.Checked =	(m_dataManager.m_toolOption[5] == 1 ? true : false);
+			menuItemSub7.Checked =	(m_dataManager.m_toolOption[6] == 1 ? true : false);
 
 			this.TopMost =			(m_dataManager.m_toolOption[4] == 1 ? true : false );
 
 			menuComboBox1.SelectedIndex = m_dataManager.m_globalHookUse;
-            menuItemSub6.Checked = (m_dataManager.m_isSHowExText==1?true:false);
 
             if ( m_dataManager.m_toolOption[3] == 0 ) m_form3.Hide();
 
@@ -291,7 +296,7 @@ namespace GraphicViewer
                 RemoveTab();
             }
             SetValueRadio();
-            ShowExReplaceText( (m_dataManager.m_isSHowExText==1?true:false) );
+            ShowExReplaceText( (m_dataManager.m_toolOption[5]==1?true:false) );
 
 
 			hotKey = new HotKey(0,Keys.F11, openScript );
@@ -463,8 +468,8 @@ namespace GraphicViewer
 		private void EnumGraphic()
 		{
 			
-
-			m_dataManager.Load("graphic.txt", m_mePath);
+			
+			m_dataManager.Load("graphic.txt");
 
 			//ツリービュー構築
 			foreach ( GenreTree nowGenre in m_dataManager.m_genreTreeMaster )
@@ -561,7 +566,7 @@ namespace GraphicViewer
 			m_bigPicCount	= 0;
 			m_activeDataSet.Clear();
 
-			if( m_dataManager.m_genreTreeByGenreName[nowGenre].m_C_C_P_Flg ) 
+			if( m_dataManager.m_genreTreeByGenreName[nowGenre].m_CCPFlg ) 
 			{
 				exGenre = nowGenre + m_preCCPname;
 
@@ -588,10 +593,12 @@ namespace GraphicViewer
 
 			}
 
+			int count = 0;
+
 			try {
 
 				string	preGenre    = "";
-				int		count		= 0;
+				
 				drawAllHeight	    = 0;
 
 				foreach (DataSet tmpData in m_activeDataSet )
@@ -605,7 +612,7 @@ namespace GraphicViewer
 						if( m_bigPicCount <= count )
 						{
 							//直接改行が指定された場合
-							if ( ( (m_dataManager.m_genreTreeByGenreName[nowGenre].m_C_C_P_Flg && preGenre != tmpData.m_genre && preGenre != "")) && alreadyLF == false )
+							if ( ( (m_dataManager.m_genreTreeByGenreName[nowGenre].m_CCPFlg && preGenre != tmpData.m_genre && preGenre != "")) && alreadyLF == false )
 							{
 								posX			= 0;
 								posY			+= m_thumbnailHeight;
@@ -616,7 +623,8 @@ namespace GraphicViewer
 							//描画前ロード
 							if (m_imgManager.m_imageDictionary.ContainsKey(fileNameNoExe) == false)
 							{
-								m_imgManager.LoadImage(tmpData, m_thumbnailWidth, m_thumbnailHeight, m_dataManager.m_faceRectByGenre);
+								if(tmpData.m_useBig == false)		m_imgManager.LoadImage(tmpData, m_thumbnailWidth, m_thumbnailHeight, m_dataManager.m_faceRectByGenre);
+								else								m_imgManager.LoadImage(tmpData, m_dataManager.m_bigThumbnailWidth, m_dataManager.m_bigThumbnailHeight);
 							}
 
 							m_activeDataSet[count].m_x = offsetX + posX;
@@ -730,10 +738,9 @@ namespace GraphicViewer
         }
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            m_dragSY = e.Y;
-            m_dragPreCount = 0;
+            m_dragSY		= e.Y;
+            m_dragPreCount	= 0;
 
-            
             //ドラッグスクロール準備
             if(e.Button == MouseButtons.Left)
             { 
@@ -852,7 +859,7 @@ namespace GraphicViewer
 				//森田さん専用追加機能→標準になったよー
 				if ((Control.ModifierKeys & Keys.Control) == Keys.Control || e.Button == MouseButtons.Middle)
 				{
-					copyString = "%q";
+					copyString = "(1)";
 				}
 
 				//森田さん専用機能2　結合コピー。キーを押しながらコピーすると、クリップボードに改行とともに追記していくくスタイル
@@ -860,17 +867,17 @@ namespace GraphicViewer
 				{
 					string tmpStr = Clipboard.GetText();
 
-					copyString = copyString.Replace("%q", fileName);
-					copyString = copyString.Replace("%o", optionString);
-					copyString = copyString.Replace("%p", optionString2);
-                    copyString = copyString.Replace("%x", optionString3);
-                    copyString = copyString.Replace("%z", optionString4);
-                    copyString = copyString.Replace("%i", m_activeDataSet[panelNo].m_summary);
+					copyString = copyString.Replace("(0)", fileName);
+					copyString = copyString.Replace("(1)", optionString);
+					copyString = copyString.Replace("(2)", optionString2);
+                    copyString = copyString.Replace("(3)", optionString3);
+                    copyString = copyString.Replace("(4)", optionString4);
+                    copyString = copyString.Replace("(9)", m_activeDataSet[panelNo].m_summary);
 					copyString = tmpStr + '\n' + textBox3.Text;
 				}
 
 				//ワイルドカード的な指定の置き換え実行
-				copyString = copyString.Replace("%q", fileName);
+				copyString = copyString.Replace("(0)", fileName);
 
 				
 
@@ -905,28 +912,28 @@ namespace GraphicViewer
                 
 
                 //フォルダ階層をテキスト置き換え
-                copyString = copyString.Replace("%d0", m_activeDataSet[panelNo].m_dirList[0]);
+                copyString = copyString.Replace("(d0)", m_activeDataSet[panelNo].m_dirList[0]);
 				
-				if (m_activeDataSet[panelNo].m_dirList.Count >= 2) copyString = copyString.Replace("%d1", m_activeDataSet[panelNo].m_dirList[1]);
-				else copyString = copyString.Replace("%d1", "");
+				if (m_activeDataSet[panelNo].m_dirList.Count >= 2) copyString = copyString.Replace("(d1)", m_activeDataSet[panelNo].m_dirList[1]);
+				else copyString = copyString.Replace("(d1)", "");
 				
-				if (m_activeDataSet[panelNo].m_dirList.Count >= 3) copyString = copyString.Replace("%d2", m_activeDataSet[panelNo].m_dirList[2]);
-				else copyString = copyString.Replace("%d2", "");
+				if (m_activeDataSet[panelNo].m_dirList.Count >= 3) copyString = copyString.Replace("(d2)", m_activeDataSet[panelNo].m_dirList[2]);
+				else copyString = copyString.Replace("(d2)", "");
 				
-				if (m_activeDataSet[panelNo].m_dirList.Count >= 4) copyString = copyString.Replace("%d3", m_activeDataSet[panelNo].m_dirList[3]);
-				else copyString = copyString.Replace("%d3", "");
+				if (m_activeDataSet[panelNo].m_dirList.Count >= 4) copyString = copyString.Replace("(d3)", m_activeDataSet[panelNo].m_dirList[3]);
+				else copyString = copyString.Replace("(d3)", "");
 				
-				if (m_activeDataSet[panelNo].m_dirList.Count >= 5) copyString = copyString.Replace("%d4", m_activeDataSet[panelNo].m_dirList[4]);
-				else copyString = copyString.Replace("%d4", "");
+				if (m_activeDataSet[panelNo].m_dirList.Count >= 5) copyString = copyString.Replace("(d4)", m_activeDataSet[panelNo].m_dirList[4]);
+				else copyString = copyString.Replace("(d4)", "");
 				
-				if (m_activeDataSet[panelNo].m_dirList.Count >= 6) copyString = copyString.Replace("%d5", m_activeDataSet[panelNo].m_dirList[5]);
-				else copyString = copyString.Replace("%d5", "");
+				if (m_activeDataSet[panelNo].m_dirList.Count >= 6) copyString = copyString.Replace("(d5)", m_activeDataSet[panelNo].m_dirList[5]);
+				else copyString = copyString.Replace("(d5)", "");
 
-				copyString = copyString.Replace("%o", optionString);
-				copyString = copyString.Replace("%p", optionString2);
-                copyString = copyString.Replace("%x", optionString3);
-                copyString = copyString.Replace("%z", optionString4);
-                copyString = copyString.Replace("%i", m_activeDataSet[panelNo].m_summary);
+				copyString = copyString.Replace("(1)", optionString);
+				copyString = copyString.Replace("(2)", optionString2);
+                copyString = copyString.Replace("(3)", optionString3);
+                copyString = copyString.Replace("(4)", optionString4);
+                copyString = copyString.Replace("(9)", m_activeDataSet[panelNo].m_summary);
 				
 				if (copyString == "" ) return;
 
@@ -1078,11 +1085,24 @@ namespace GraphicViewer
 			TreeNode tmpBaseNode = treeView1.SelectedNode.Parent;		//refNodeは状況によって親ノードとは限らないため、再取得
 			if (tmpBaseNode != null)
 			{
-				tabControl1.SelectedTab.Text = treeView1.SelectedNode.Text;
+				//恋姫専用処理・タブの名前を武将の先頭3文字に
+				string tmpTabName		= treeView1.SelectedNode.Text;
+				//TreeNode tmpTabNameNode = treeView1.SelectedNode;
+				//while(tmpTabNameNode.Level >= 2 ) tmpTabNameNode = tmpTabNameNode.Parent;
+				//int cutStrLen = (tmpTabNameNode.Text.Length >= 3?3: tmpTabNameNode.Text.Length);
+				//tmpTabName = tmpTabNameNode.Text;
+				//if (tmpTabNameNode.Level > 0) tmpTabName = tmpTabName.Substring(0, cutStrLen);
+
+
+				tabControl1.SelectedTab.Text =tmpTabName;
 				while (tmpBaseNode.Level > 2)
 					tmpBaseNode = tmpBaseNode.Parent;
 
-				if (tmpBaseNode.Level == 2 && tmpBaseNode != null ) tabControl1.SelectedTab.Text = tmpBaseNode.Text;
+				//if (tmpBaseNode.Level == 2 && tmpBaseNode != null ) tabControl1.SelectedTab.Text = tmpBaseNode.Text;
+			}
+			else
+			{
+				tabControl1.SelectedTab.Text = treeView1.SelectedNode.Text;
 			}
 
 			
@@ -1096,7 +1116,7 @@ namespace GraphicViewer
 			string nowGenre = totalParentName + treeView1.SelectedNode.Text;
 			m_tmpReceive = true;
 			comboBox2.Items.Clear();
-			if( m_dataManager.m_genreTreeByGenreName[nowGenre].m_C_C_P_Flg )
+			if( m_dataManager.m_genreTreeByGenreName[nowGenre].m_CCPFlg )
 			{
 				comboBox2.Enabled = true;
 				
@@ -2095,8 +2115,9 @@ namespace GraphicViewer
 			versionText += Environment.NewLine;
 			versionText += Environment.NewLine + "ver 1.1.10：21-05-11：" + Environment.NewLine + "option.txt のタブ履歴に存在しないタブがあった場合のエラーを修正。";
 			versionText += Environment.NewLine;
-			versionText += Environment.NewLine + "ver 1.1.11：21-05-11：" + Environment.NewLine + "古いoption.txtに対応" +
-				"、graphic.txtのエラー箇所を表示するように修正。";
+			versionText += Environment.NewLine + "ver 1.1.11：21-05-11：" + Environment.NewLine + "古いoption.txtに対応、graphic.txtのエラー箇所を表示するように修正。";
+			versionText += Environment.NewLine;
+			versionText += Environment.NewLine + "ver 1.1.12：21-05-20：" + Environment.NewLine + "置き換え用の記号を (0)～(4)(9)に変更。" +
 
 			System.Windows.Forms.MessageBox.Show( versionText, "GraphicViewer バージョン情報" );
 		}
@@ -2130,7 +2151,6 @@ namespace GraphicViewer
 
         private void ShowExReplaceText( bool isShow )
         {
-            m_dataManager.m_isSHowExText = (menuItemSub6.Checked==true?1:0);
 
             groupBox1.Visible = isShow;
             groupBox5.Visible = isShow;

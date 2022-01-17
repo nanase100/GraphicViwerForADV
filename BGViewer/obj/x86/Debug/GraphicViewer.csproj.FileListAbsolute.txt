@@ -3,7 +3,6 @@ C:\Users\NEXTON002\Documents\GitHub\GraphicViwerForADV\BGViewer\bin\Debug\Graphi
 C:\Users\NEXTON002\Documents\GitHub\GraphicViwerForADV\BGViewer\bin\Debug\GraphicViewer.pdb
 C:\Users\NEXTON002\Documents\GitHub\GraphicViwerForADV\BGViewer\bin\Debug\Newtonsoft.Json.dll
 C:\Users\NEXTON002\Documents\GitHub\GraphicViwerForADV\BGViewer\bin\Debug\Newtonsoft.Json.xml
-C:\Users\NEXTON002\Documents\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Debug\GraphicViewer.csprojAssemblyReference.cache
 C:\Users\NEXTON002\Documents\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Debug\GraphicViewer.Form1.resources
 C:\Users\NEXTON002\Documents\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Debug\GraphicViewer.Form2.resources
 C:\Users\NEXTON002\Documents\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Debug\GraphicViewer.folderStr.resources
@@ -13,3 +12,4 @@ C:\Users\NEXTON002\Documents\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Debug\Gr
 C:\Users\NEXTON002\Documents\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Debug\GraphicViewer.csproj.CopyComplete
 C:\Users\NEXTON002\Documents\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Debug\GraphicViewer.exe
 C:\Users\NEXTON002\Documents\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Debug\GraphicViewer.pdb
+C:\Users\NEXTON002\Documents\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Debug\GraphicViewer.csproj.AssemblyReference.cache

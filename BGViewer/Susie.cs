@@ -37,8 +37,9 @@ namespace garu.Util
 				Load((string)regkey.GetValue("Path"));
 				regkey.Close();
 			}
-			
-			Load(Application.StartupPath);
+
+			//Load(Application.StartupPath);
+			Load(Directory.GetCurrentDirectory());
 
 			versions = items.ConvertAll<string>(delegate(SusiePlugin spi) {
 				return spi.Version;

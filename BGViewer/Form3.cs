@@ -310,33 +310,33 @@ namespace GraphicViewer
 			string copyString = m_copyString;
 
 			//フォルダ階層をテキスト置き換え
-			copyString = copyString.Replace("%d0", folderName.m_folderName[0]);
+			copyString = copyString.Replace("(d0)", folderName.m_folderName[0]);
 				
-			if (folderName.m_folderName.Count >= 2) copyString = copyString.Replace("%d1", folderName.m_folderName[1]);
-			else copyString = copyString.Replace("%d1", "");
+			if (folderName.m_folderName.Count >= 2) copyString = copyString.Replace("(d1)", folderName.m_folderName[1]);
+			else copyString = copyString.Replace("(d1)", "");
 				
-			if (folderName.m_folderName.Count >= 3) copyString = copyString.Replace("%d2", folderName.m_folderName[2]);
-			else copyString = copyString.Replace("%d2", "");
+			if (folderName.m_folderName.Count >= 3) copyString = copyString.Replace("(d2)", folderName.m_folderName[2]);
+			else copyString = copyString.Replace("(d2)", "");
 				
-			if (folderName.m_folderName.Count >= 4) copyString = copyString.Replace("%d3", folderName.m_folderName[3]);
-			else copyString = copyString.Replace("%d3", "");
+			if (folderName.m_folderName.Count >= 4) copyString = copyString.Replace("(d3)", folderName.m_folderName[3]);
+			else copyString = copyString.Replace("(d3)", "");
 				
-			if (folderName.m_folderName.Count >= 5) copyString = copyString.Replace("%d4", folderName.m_folderName[4]);
-			else copyString = copyString.Replace("%d4", "");
+			if (folderName.m_folderName.Count >= 5) copyString = copyString.Replace("(d4)", folderName.m_folderName[4]);
+			else copyString = copyString.Replace("(d4)", "");
 				
-			if (folderName.m_folderName.Count >= 6) copyString = copyString.Replace("%d5", folderName.m_folderName[5]);
-			else copyString = copyString.Replace("%d5", "");
+			if (folderName.m_folderName.Count >= 6) copyString = copyString.Replace("(d5)", folderName.m_folderName[5]);
+			else copyString = copyString.Replace("(d5)", "");
 
-			if( direct ) copyString = "%q";
+			if( direct ) copyString = "(1)";
 
 			//ワイルドカード的な指定の置き換え実行
-			if( copyStr != "" )		copyString = copyString.Replace("%q", copyStr);
-			else					copyString = copyString.Replace("%q", fileName);
+			if( copyStr != "" )		copyString = copyString.Replace("(1)", copyStr);
+			else					copyString = copyString.Replace("(1)", fileName);
 
-			copyString = copyString.Replace("%o", m_optionString);
-			copyString = copyString.Replace("%p", m_optionString2);
-            copyString = copyString.Replace("%x", m_optionString3);
-            copyString = copyString.Replace("%z", m_optionString4);
+			copyString = copyString.Replace("(2)", m_optionString);
+			copyString = copyString.Replace("(3)", m_optionString2);
+            copyString = copyString.Replace("(4)", m_optionString3);
+            copyString = copyString.Replace("(5)", m_optionString4);
 
             if (copyString == "" ) return;
 
