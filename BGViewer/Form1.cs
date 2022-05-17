@@ -46,14 +46,6 @@ namespace GraphicViewer
 		IntPtr debughWnd = IntPtr.Zero;
 
 
-		
-	
-
-
-
-
-
-
 		public ImageManager		m_imgManager        = new ImageManager();
 		public DataManger		m_dataManager       = new DataManger();
 		public Bitmap			m_bitmapSurface;
@@ -73,19 +65,25 @@ namespace GraphicViewer
 		public string			m_copyString9        = "";
 		public int				m_preSelectSubCopyNo = -1;
 		public int				m_bigPicCount		 = 0;				//アクティブなジャンルセットに大型立ち絵データを含む枚数。
-        public int m_bigPicPosY = 0;               //アクティブなジャンルセットに大型立ち絵データを含む枚数。
+        public int				m_bigPicPosY		= 0;               //アクティブなジャンルセットに大型立ち絵データを含む枚数。
         public List<DataSet>	m_activeDataSet		 = new List<DataSet>();
+
+		public bool				m_isPreTabDragDrop = false;
+		public	bool			m_isTabDragDrop		= false;
+		public int				m_tabDragDropS_ID	= -1;
+		public int				m_tabDragDropE_ID	= -1;
+		public int				m_tabDragDropPre_ID = -1;
 
 		private List<List<bool>>	m_nodeStateWList = new List<List<bool>>();
 
 		public static int		m_isGlobalPush = 0;
-        public  bool         m_isDrag   = false;
+        public  bool			m_isDrag   = false;
+
+		public Brush[]		m_colorPalette = { Brushes.White, Brushes.Red, Brushes.Green, Brushes.Blue, Brushes.Tan, Brushes.Bisque, Brushes.Magenta, Brushes.BlueViolet, Brushes.PaleGreen, Brushes.OliveDrab, Brushes.RosyBrown, Brushes.Aquamarine, Brushes.Cornsilk, Brushes.MintCream, Brushes.DarkKhaki, Brushes.DarkGray, Brushes.DeepPink, Brushes.DarkOrchid, Brushes.Chocolate, Brushes.LawnGreen };
 
 		KeyboardHook hooker = new HongliangSoft.Utilities.Gui.KeyboardHook(Check_HoldHotkey);
 
-
 		HotKey hotKey = null;
-
 		Form3			m_form3;
 		int				m_activeTabNo		= 0;
 		List<TreeNode>	m_tabList			= new List<TreeNode>();
@@ -101,12 +99,11 @@ namespace GraphicViewer
         int             m_selectOptionStringNo3 = 0;
         int             m_selectOptionStringNo4 = 0;
         bool			m_receiveFlg			= false;
-
 		string			m_preCCPname			= "";
 		bool			m_tmpReceive			= false;
 		int             m_isPicDrageState       = 0;
-        int             m_dragSY             = 0;
-        int             m_dragPreCount = 0;
+        int             m_dragSY				= 0;
+        int             m_dragPreCount			= 0;
 
 		
 		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
@@ -126,27 +123,27 @@ namespace GraphicViewer
 		[DllImport("user32")]
 		static extern short GetAsyncKeyState(Keys vKey);
 		
-
 		//-----------------------------------------------------------------------------------
 		//フォームのコンストラクタ
 		//-----------------------------------------------------------------------------------
 		public Form1()
 		{
-			
 			InitializeComponent();
 			m_mePath                        = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
 			this.pictureBox1.MouseWheel     += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseWheel);
+			this.tabControl1.MouseWheel		+= new System.Windows.Forms.MouseEventHandler(this.tabControl1_MouseWheel);
 
 			for (int i = 0; i < m_dataManager.GetOptionStringCount(); i++)
 			{
 				m_dataManager.m_optionString[i] = "";
+				toolStripMenuItem2.Text = m_dataManager.m_showTabLv.ToString();
+				toolStripMenuItem3.Text = m_dataManager.m_showTabStrCount.ToString();
 			}
 
 			//カレントディレクトリを取得する
 			//Console.WriteLine(System.Environment.CurrentDirectory);
 			//Console.WriteLine(System.IO.Directory.GetCurrentDirectory());
 		}
-
 
 		//-----------------------------------------------------------------------------------
 		//フォームのデストラクタ
@@ -165,14 +162,14 @@ namespace GraphicViewer
             m_dataManager.m_tabBackupDat.Clear();
 
 			int i = 0;
-            foreach( var tmp in m_tabList )
-            {
+			foreach( var tmp in m_tabList )
+			{
 				if(tmp == null )continue;
-				m_dataManager.m_tabBackupDat.Add( new TabBackupDat(tmp.FullPath, m_tabInfo[i].m_tabOpValue, m_tabInfo[i].m_tabOpValue2, m_tabInfo[i].m_tabOpValue3, m_tabInfo[i].m_tabOpValue4, m_tabInfo[i].m_tabOpCopyID, m_tabInfo[i].m_tabCCPNo ) );
+				m_dataManager.m_tabBackupDat.Add( new TabBackupDat(tmp.FullPath, m_tabInfo[i].m_tabOpValue, m_tabInfo[i].m_tabOpValue2, m_tabInfo[i].m_tabOpValue3, m_tabInfo[i].m_tabOpValue4, m_tabInfo[i].m_tabOpCopyID, m_tabInfo[i].m_tabCCPNo, m_tabInfo[i].m_colorIndex) );
 				i++;
-            }
+			}
 
-            m_dataManager.m_copyString1		= m_copyString1;
+			m_dataManager.m_copyString1		= m_copyString1;
 			m_dataManager.m_copyString2		= m_copyString2;
 			m_dataManager.m_copyString3		= m_copyString3;
 			m_dataManager.m_copyString4     = m_copyString4;
@@ -206,8 +203,12 @@ namespace GraphicViewer
 			m_dataManager.m_toolOption[4]	= (menuItemSub5.Checked == true ? 1 : 0 );
 			m_dataManager.m_toolOption[5]	= (menuItemSub6.Checked == true ? 1 : 0);
 			m_dataManager.m_toolOption[6]	= (menuItemSub7.Checked == true ? 1 : 0);
+			m_dataManager.m_toolOption[7] = (ToolStripMenuItem8.Checked == true ? 1 : 0);
 
 			m_dataManager.m_globalHookUse	= menuComboBox1.SelectedIndex;
+
+			m_dataManager.m_showTabLv = int.Parse(toolStripMenuItem2.Text);
+			m_dataManager.m_showTabStrCount	= int.Parse(toolStripMenuItem3.Text);
 
 			m_dataManager.SettingSave("option.txt");
 
@@ -220,13 +221,24 @@ namespace GraphicViewer
 		//-----------------------------------------------------------------------------------
 		private void Form1_Load(object sender, EventArgs e)
 		{
-		
 			if( m_dataManager.SettingLoad("option.txt") == false )
 			{
 				m_dataManager.SettingLoad("_option.txt", true);			
 			}
 
-			m_thumbnailWidth					= m_dataManager.m_thumbnailWidth;
+			//-----------------------------------
+			//タブの色変えのためオーナードロー設定
+			//タブのサイズを固定する
+			//tabControl1.SizeMode = TabSizeMode.Fixed;
+			//tabControl1.ItemSize = new Size(60, 18);
+
+			//TabControlをオーナードローする
+			tabControl1.DrawMode = TabDrawMode.OwnerDrawFixed;
+			//DrawItemイベントハンドラを追加
+			tabControl1.DrawItem += new DrawItemEventHandler(TabControl1_DrawItem);
+			//-----------------------------------
+
+			m_thumbnailWidth = m_dataManager.m_thumbnailWidth;
 			m_thumbnailHeight					= m_dataManager.m_thumbnailHeight;
 			m_summaryFontSize					= m_dataManager.m_summaryFontSize;
 
@@ -271,12 +283,18 @@ namespace GraphicViewer
 			menuItemSub5.Checked =	(m_dataManager.m_toolOption[4] == 1 ? true : false );
 			menuItemSub6.Checked =	(m_dataManager.m_toolOption[5] == 1 ? true : false);
 			menuItemSub7.Checked =	(m_dataManager.m_toolOption[6] == 1 ? true : false);
+			
+			ToolStripMenuItem8.Checked = (m_dataManager.m_toolOption[7] == 1 ? true : false);
 
 			this.TopMost =			(m_dataManager.m_toolOption[4] == 1 ? true : false );
 
 			menuComboBox1.SelectedIndex = m_dataManager.m_globalHookUse;
 
-            if ( m_dataManager.m_toolOption[3] == 0 ) m_form3.Hide();
+			toolStripMenuItem2.Text	= m_dataManager.m_showTabLv.ToString();
+			toolStripMenuItem3.Text = m_dataManager.m_showTabStrCount.ToString();
+
+
+			if ( m_dataManager.m_toolOption[3] == 0 ) m_form3.Hide();
 
 			int i = 0;
             foreach( var tmp in m_dataManager.m_tabBackupDat )
@@ -286,7 +304,7 @@ namespace GraphicViewer
 				if(treeView1.SelectedNode == null ) continue;
                 AddTab();
 				
-                m_tabInfo[i].SetVal(tmp.m_Opt1No,tmp.m_Opt2No, tmp.m_Opt3No, tmp.m_Opt4No, tmp.m_CopyNo, tmp.m_CCPNo );
+                m_tabInfo[i].SetVal(tmp.m_Opt1No,tmp.m_Opt2No, tmp.m_Opt3No, tmp.m_Opt4No, tmp.m_CopyNo, tmp.m_CCPNo, tmp.m_colorIndex);
 
 				i++;
             }
@@ -297,6 +315,9 @@ namespace GraphicViewer
             }
             SetValueRadio();
             ShowExReplaceText( (m_dataManager.m_toolOption[5]==1?true:false) );
+
+
+
 
 
 			hotKey = new HotKey(0,Keys.F11, openScript );
@@ -431,6 +452,52 @@ namespace GraphicViewer
 
 		}
 
+
+
+
+
+		//-----------------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------------
+		public void tabControl1_MouseWheel(object sender, MouseEventArgs e)
+		{
+			int itemIndex = -1;
+			Rectangle rect;
+			for( int i = 0; i < tabControl1.TabPages.Count; i++ )
+			{
+				rect = tabControl1.GetTabRect(i);
+				if( rect.Left <= e.X && rect.Right >= e.X && rect.Top <= e.Y && rect.Bottom >= e.Y )
+				{
+					itemIndex = i;
+					break;
+				}
+			}
+
+			if( itemIndex == -1 ) return;
+
+			int newScrollValue = vScrollBar1.Value - ((e.Delta * SystemInformation.MouseWheelScrollLines / 120) * 12);
+
+			if (newScrollValue < 0)
+			{
+				m_tabInfo[itemIndex].m_colorIndex--;
+			}
+			else
+			{
+				m_tabInfo[itemIndex].m_colorIndex++;
+			}
+
+			if(m_tabInfo[itemIndex].m_colorIndex < 0) m_tabInfo[itemIndex].m_colorIndex = m_colorPalette.Count() - 1;
+
+			if (m_tabInfo[itemIndex].m_colorIndex >= m_colorPalette.Count() ) m_tabInfo[itemIndex].m_colorIndex = 0;
+
+			//tabControl1.SelectedTab.ForeColor = Color.Tomato;
+
+			tabControl1.Invalidate();
+
+			
+
+		}
+
 		//-----------------------------------------------------------------------------------
 		//win32 apiメッセージでctr+vを送る。秀丸に貼り付けるオプション用1
 		//-----------------------------------------------------------------------------------
@@ -468,7 +535,6 @@ namespace GraphicViewer
 		private void EnumGraphic()
 		{
 			
-			
 			m_dataManager.Load("graphic.txt");
 
 			//ツリービュー構築
@@ -483,9 +549,7 @@ namespace GraphicViewer
 			m_nodeStateWList.Add( new List<bool>() );
 			StockNodesState(m_nodeStateWList.Count-1);
 
-
-            m_tabInfo.Add( new CTabStatusInfo(m_selectOptionStringNo, m_selectOptionStringNo2, m_selectOptionStringNo3, m_selectOptionStringNo4,0,0));
-
+            m_tabInfo.Add( new CTabStatusInfo(m_selectOptionStringNo, m_selectOptionStringNo2, m_selectOptionStringNo3, m_selectOptionStringNo4,0,0, 0));
 
 			if (treeView1.Nodes.Count > 0)
 			{
@@ -523,8 +587,6 @@ namespace GraphicViewer
 			m_bitmapSurface = new Bitmap(pictureBox1.Width, pictureBox1.Height);
 		}
 
-		
-
 		//-----------------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------------
@@ -536,7 +598,7 @@ namespace GraphicViewer
 
 			g.FillRectangle( Brushes.Black, 0, 0, pictureBox1.Width, pictureBox1.Height );
 
-			string			fileNameNoExe;
+			string			fileNameNoExe	= "";
 			int				posX			= 0;
 			int				posY			= -vScrollBar1.Value;
 			int				summaryPosY		= 0;
@@ -1081,29 +1143,7 @@ namespace GraphicViewer
 			m_tabList[m_activeTabNo] = treeView1.SelectedNode;
 			
 
-			//武将以下のフォルダを直接開いた場合に、タブ名に武将階層のフォルダ名をセットする
-			TreeNode tmpBaseNode = treeView1.SelectedNode.Parent;		//refNodeは状況によって親ノードとは限らないため、再取得
-			if (tmpBaseNode != null)
-			{
-				//恋姫専用処理・タブの名前を武将の先頭3文字に
-				string tmpTabName		= treeView1.SelectedNode.Text;
-				//TreeNode tmpTabNameNode = treeView1.SelectedNode;
-				//while(tmpTabNameNode.Level >= 2 ) tmpTabNameNode = tmpTabNameNode.Parent;
-				//int cutStrLen = (tmpTabNameNode.Text.Length >= 3?3: tmpTabNameNode.Text.Length);
-				//tmpTabName = tmpTabNameNode.Text;
-				//if (tmpTabNameNode.Level > 0) tmpTabName = tmpTabName.Substring(0, cutStrLen);
-
-
-				tabControl1.SelectedTab.Text =tmpTabName;
-				while (tmpBaseNode.Level > 2)
-					tmpBaseNode = tmpBaseNode.Parent;
-
-				//if (tmpBaseNode.Level == 2 && tmpBaseNode != null ) tabControl1.SelectedTab.Text = tmpBaseNode.Text;
-			}
-			else
-			{
-				tabControl1.SelectedTab.Text = treeView1.SelectedNode.Text;
-			}
+			UpdateTabName();
 
 			
 			TreeNode tmpNode = treeView1.SelectedNode.Parent;
@@ -1151,6 +1191,88 @@ namespace GraphicViewer
 			DoPaint();
 			UpdateCount();
 			
+		}
+		private void UpdateTabName()
+		{
+
+			//武将以下のフォルダを直接開いた場合に、タブ名に武将階層のフォルダ名をセットする
+			TreeNode tmpBaseNode = treeView1.SelectedNode.Parent;       //refNodeは状況によって親ノードとは限らないため、再取得
+			if (tmpBaseNode != null)
+			{
+				//恋姫専用処理・タブの名前を武将の先頭3文字に
+				string tmpTabName = treeView1.SelectedNode.Text;
+				if (ToolStripMenuItem8.Checked)
+				{
+					int toLv = int.Parse(toolStripMenuItem2.Text);
+					int strCount = int.Parse(toolStripMenuItem3.Text);
+
+					TreeNode tmpTabNameNode = treeView1.SelectedNode;
+					while (tmpTabNameNode != null && tmpTabNameNode.Level >= toLv) tmpTabNameNode = tmpTabNameNode.Parent;
+
+					int cutStrLen = (tmpTabNameNode.Text.Length >= strCount ? strCount : tmpTabNameNode.Text.Length);
+
+					tmpTabName = tmpTabNameNode.Text;
+					tmpTabName = tmpTabName.Substring(0, cutStrLen);
+				}
+
+
+				tabControl1.SelectedTab.Text = tmpTabName;
+				while (tmpBaseNode.Level > 2)
+					tmpBaseNode = tmpBaseNode.Parent;
+
+				//if (tmpBaseNode.Level == 2 && tmpBaseNode != null ) tabControl1.SelectedTab.Text = tmpBaseNode.Text;
+			}
+			else
+			{
+				int strCount = int.Parse(toolStripMenuItem3.Text);
+
+				if (ToolStripMenuItem8.Checked == false) strCount = treeView1.SelectedNode.Text.Length;
+
+				tabControl1.SelectedTab.Text = treeView1.SelectedNode.Text.Substring(0, strCount);
+			}
+		}
+
+		private void UpdateTabNameAll()
+		{
+			for( int i = 0; i < m_tabList.Count; i++ )
+			{
+				//武将以下のフォルダを直接開いた場合に、タブ名に武将階層のフォルダ名をセットする
+				TreeNode tmpBaseNode = m_tabList[i];       //refNodeは状況によって親ノードとは限らないため、再取得
+
+				if (tmpBaseNode != null)
+				{
+					//恋姫専用処理・タブの名前を武将の先頭3文字に
+					string tmpTabName = m_tabList[i].Text;
+					if (ToolStripMenuItem8.Checked)
+					{
+						int toLv = int.Parse(toolStripMenuItem2.Text);
+						int strCount = int.Parse(toolStripMenuItem3.Text);
+
+						TreeNode tmpTabNameNode = m_tabList[i];
+						while (tmpTabNameNode != null && tmpTabNameNode.Level >= toLv) tmpTabNameNode = tmpTabNameNode.Parent;
+
+						int cutStrLen = (tmpTabNameNode.Text.Length >= strCount ? strCount : tmpTabNameNode.Text.Length);
+
+						tmpTabName = tmpTabNameNode.Text;
+						tmpTabName = tmpTabName.Substring(0, cutStrLen);
+					}
+
+
+					tabControl1.TabPages[i].Text = tmpTabName;
+					while (tmpBaseNode.Level > 2)
+						tmpBaseNode = tmpBaseNode.Parent;
+
+					//if (tmpBaseNode.Level == 2 && tmpBaseNode != null ) tabControl1.SelectedTab.Text = tmpBaseNode.Text;
+				}
+				else
+				{
+					int strCount = int.Parse(toolStripMenuItem3.Text);
+
+					if (ToolStripMenuItem8.Checked == false) strCount = treeView1.SelectedNode.Text.Length;
+
+					tabControl1.TabPages[i].Text = treeView1.SelectedNode.Text.Substring(0, strCount);
+				}
+			}
 		}
 
 		private void radioButton1_CheckedChanged(object sender, EventArgs e)
@@ -1466,7 +1588,7 @@ namespace GraphicViewer
 		/// <summary>
 		/// タブの追加
 		/// </summary>
-		private void AddTab( int optStr1No =-1, int optStr2No = -1, int optStr3No = -1, int optStr4No = -1, int copyStrNo = -1, int ccpNo = -1 )
+		private void AddTab( int optStr1No =-1, int optStr2No = -1, int optStr3No = -1, int optStr4No = -1, int copyStrNo = -1, int ccpNo = -1, int colorIndex = 0 )
 		{
 			if (treeView1.SelectedNode != null)
 			{
@@ -1484,7 +1606,7 @@ namespace GraphicViewer
                 if (copyStrNo == -1) copyStrNo  = comboBox1.SelectedIndex;
                 if (ccpNo == -1)     ccpNo		= comboBox2.SelectedIndex;
 
-                m_tabInfo.Add( new CTabStatusInfo(optStr1No, optStr2No, optStr3No, optStr4No, copyStrNo, ccpNo ) );
+                m_tabInfo.Add( new CTabStatusInfo(optStr1No, optStr2No, optStr3No, optStr4No, copyStrNo, ccpNo, colorIndex ) );
 
 				TreeNode tmpBaseNode = treeView1.SelectedNode.Parent;
 				if (tmpBaseNode != null)
@@ -2127,10 +2249,153 @@ namespace GraphicViewer
 			DoPaint();
 		}
 
-		private void toolStripComboBox1_Click(object sender, EventArgs e)
+
+
+
+
+		//------------------------------------------------------------------------
+		//
+		//タブコントロール・ドラッグアンドドロップまとめ
+		//
+		//------------------------------------------------------------------------
+
+		private void tabControl1_MouseDown(object sender, MouseEventArgs e)
 		{
+			int itemIndex = -1;
+			Rectangle rect;
+			for (int i = 0; i < tabControl1.TabPages.Count; i++)
+			{
+				rect = tabControl1.GetTabRect(i);
+				if (rect.Left <= e.X && rect.Right >= e.X && rect.Top <= e.Y && rect.Bottom >= e.Y)
+				{
+					itemIndex = i;
+					break;
+				}
+			}
+			if(itemIndex == -1 ) return;
+
+
+			m_isPreTabDragDrop = true;
+
+			m_tabDragDropS_ID = itemIndex;
 
 		}
+
+		private void tabControl1_MouseUp(object sender, MouseEventArgs e)
+		{
+			m_isPreTabDragDrop = false;
+
+			if (  m_isTabDragDrop == false )
+			{
+				tabControl1.Invalidate();
+				return;
+			}
+
+			m_isTabDragDrop = false;
+
+			int itemIndex = -1;
+			Rectangle rect;
+			for (int i = 0; i < tabControl1.TabPages.Count; i++)
+			{
+				rect = tabControl1.GetTabRect(i);
+				if (rect.Left <= e.X && rect.Right >= e.X && rect.Top <= e.Y && rect.Bottom >= e.Y)
+				{
+					itemIndex = i;
+					break;
+				}
+			}
+
+			m_tabDragDropE_ID = itemIndex;
+
+			if (itemIndex == -1 || m_tabDragDropS_ID == m_tabDragDropE_ID)
+			{
+				m_tabDragDropS_ID = -1;
+				m_tabDragDropE_ID = -1;
+				return;
+			}
+
+			if(m_tabDragDropS_ID < m_tabDragDropE_ID ) m_tabDragDropE_ID--;
+
+			TreeNode tmptab = m_tabList[m_tabDragDropS_ID];
+			m_tabList.Remove(m_tabList[m_tabDragDropS_ID]);
+			m_tabList.Insert(m_tabDragDropE_ID, tmptab);
+
+
+			tmptab = m_topNodeList[m_tabDragDropS_ID];
+			m_topNodeList.Remove(m_tabList[m_tabDragDropS_ID]);
+			m_topNodeList.Insert(m_tabDragDropE_ID, tmptab);
+
+
+			CTabStatusInfo tmpTabInfo = m_tabInfo[m_tabDragDropS_ID];
+			m_tabInfo.Remove(m_tabInfo[m_tabDragDropS_ID]);
+			m_tabInfo.Insert(m_tabDragDropE_ID, tmpTabInfo);
+
+
+
+			//for ( int i = 0; i < tabControl1.TabPages.Count; i++ )
+
+			//{
+
+			//	tabControl1.TabPages[i].Text = m_tabList[i].Text;
+
+			//}
+
+			UpdateTabNameAll();
+
+
+			tabControl1.Invalidate();
+
+
+		}
+
+		private void toolStripMenuItem2_TextChanged(object sender, EventArgs e)
+		{
+			int ret = 0;
+			if( int.TryParse(toolStripMenuItem2.Text,out ret) == false  ) toolStripMenuItem2.Text = "2";
+			if( ret == 0 ) toolStripMenuItem2.Text = "2";
+		}
+
+		private void tabControl1_MouseMove(object sender, MouseEventArgs e)
+		{
+			if( m_isPreTabDragDrop == true ) m_isTabDragDrop = true;
+			if (m_isTabDragDrop == false) return;
+
+			int itemIndex = -1;
+
+			Rectangle rect = new Rectangle(0,0,0,0);
+			for (int i = 0; i < tabControl1.TabPages.Count; i++)
+			{
+				rect = tabControl1.GetTabRect(i);
+				if (rect.Left <= e.X && rect.Right >= e.X && rect.Top <= e.Y && rect.Bottom >= e.Y)
+				{
+					itemIndex = i;
+					break;
+				}
+			}
+
+			if(itemIndex == -1 ) return;
+
+			if(m_tabDragDropPre_ID != itemIndex )
+			{
+				tabControl1.Refresh();
+				m_tabDragDropPre_ID = itemIndex;
+
+				var grap = tabControl1.CreateGraphics();
+
+				Pen linePen = new Pen(Color.Red, 3);
+				grap.DrawLine(linePen, rect.Left, rect.Top, rect.Left, rect.Bottom);
+				grap.DrawLine(linePen, rect.Left+1, rect.Top, rect.Left+1, rect.Bottom);
+
+				grap.Dispose();
+
+			}
+
+
+
+
+		}
+
+
 
 		private void menuComboBox1_SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -2179,8 +2444,58 @@ namespace GraphicViewer
             ShowExReplaceText(isCheck);
         }
 
-        
-    }
+		//TabControl1のDrawItemイベントハンドラ
+		private void TabControl1_DrawItem(object sender, DrawItemEventArgs e)
+		{
+			//対象のTabControlを取得
+			TabControl tab = (TabControl)sender;
+			//タブページのテキストを取得
+			string txt = tab.TabPages[e.Index].Text;
+
+			//タブのテキストと背景を描画するためのブラシを決定する
+			Brush foreBrush, backBrush;
+			
+			int colorIndex = 0;
+			
+			if(m_tabInfo.Count > e.Index ) colorIndex = m_tabInfo[e.Index].m_colorIndex;
+
+			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+			{
+				//選択されているタブのテキストを赤、背景を青とする
+				foreBrush = ( colorIndex==0?Brushes.Black: Brushes.White);
+
+				backBrush = m_colorPalette[colorIndex];
+				//backBrush = Brushes.Blue;
+			}
+			else
+			{
+				//選択されていないタブのテキストは灰色、背景を白とする
+				foreBrush = (colorIndex == 0 ? Brushes.Black : Brushes.White);
+
+				backBrush = m_colorPalette[colorIndex];
+			}
+
+			//StringFormatを作成
+			StringFormat sf = new StringFormat();
+			//中央に表示する
+			sf.Alignment = StringAlignment.Center;
+			sf.LineAlignment = StringAlignment.Center;
+
+			//背景の描画
+			e.Graphics.FillRectangle(backBrush, e.Bounds);
+			//Textの描画
+			e.Graphics.DrawString(txt, e.Font, foreBrush, e.Bounds, sf);
+		}
+
+	}
+
+
+
+
+
+
+
+
 
     public class CTabStatusInfo
     {
@@ -2191,15 +2506,17 @@ namespace GraphicViewer
         public int m_tabOpCopyID;
         public int m_tabCCPNo;
 
+		public int m_colorIndex;
+
         public int m_scrollPos;
 
-        public CTabStatusInfo(int tabOpValue, int tabOpValue2, int tabOpValue3, int tabOpValue4, int tabOpCopyID, int tabCCPNo)
+        public CTabStatusInfo(int tabOpValue, int tabOpValue2, int tabOpValue3, int tabOpValue4, int tabOpCopyID, int tabCCPNo, int colorIndex )
         {
-            SetVal(tabOpValue, tabOpValue2, tabOpValue3, tabOpValue4, tabOpCopyID, tabCCPNo);
+            SetVal(tabOpValue, tabOpValue2, tabOpValue3, tabOpValue4, tabOpCopyID, tabCCPNo,colorIndex);
 
             m_scrollPos = 0;
         }
-        public void SetVal(int tabOpValue, int tabOpValue2, int tabOpValue3, int tabOpValue4, int tabOpCopyID, int tabCCPNo)
+        public void SetVal(int tabOpValue, int tabOpValue2, int tabOpValue3, int tabOpValue4, int tabOpCopyID, int tabCCPNo, int colorIndex)
         {
             m_tabOpValue = tabOpValue;
             m_tabOpValue2 = tabOpValue2;
@@ -2208,8 +2525,11 @@ namespace GraphicViewer
             m_tabOpCopyID = tabOpCopyID;
             m_tabCCPNo = tabCCPNo;
 
-            if(m_tabOpCopyID == -1 ) m_tabOpCopyID = 0;
+			m_colorIndex = colorIndex;
+
+
+			if (m_tabOpCopyID == -1 ) m_tabOpCopyID = 0;
         }
 
-    };
+	};
 }

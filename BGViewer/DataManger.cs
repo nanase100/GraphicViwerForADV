@@ -130,8 +130,9 @@ namespace GraphicViewer
 		public int m_Opt4No { set; get; }
 		public int m_CopyNo { set; get; }
 		public int m_CCPNo { set; get; }
+		public int m_colorIndex { set; get; }
 
-		public TabBackupDat(string tabName, int opt1No, int opt2No, int opt3No, int opt4No, int copyNo, int ccpNo)
+		public TabBackupDat(string tabName, int opt1No, int opt2No, int opt3No, int opt4No, int copyNo, int ccpNo,int colorIndex )
 		{
 			m_tabName = tabName;
 			m_Opt1No = opt1No;
@@ -140,6 +141,7 @@ namespace GraphicViewer
 			m_Opt4No = opt4No;
 			m_CopyNo = copyNo;
 			m_CCPNo = ccpNo;
+			m_colorIndex = colorIndex;
 
 		}
 	}
@@ -197,6 +199,9 @@ namespace GraphicViewer
 
 		public int m_globalHookUse { set; get; } = 0;
 
+		public int m_showTabLv { set; get; } = 2;
+		public int m_showTabStrCount { set; get; } = 3;
+
 		public readJsonType1 jsonData { set; get; }
 
 		public int GetOptionStringCount()
@@ -252,6 +257,7 @@ namespace GraphicViewer
 
 			m_toolOption = new List<int>
 			{
+				0,
 				0,
 				0,
 				0,
@@ -371,10 +377,12 @@ namespace GraphicViewer
 				////タブバックアップの取得
 				foreach (var data in jsonData.タブ履歴)
 				{
-					m_tabBackupDat.Add(new TabBackupDat(data.タブ名, data.オプション[0], data.オプション[1], data.オプション[2], data.オプション[3], data.オプション[4], data.オプション[5]));
+					m_tabBackupDat.Add(new TabBackupDat(data.タブ名, data.オプション[0], data.オプション[1], data.オプション[2], data.オプション[3], data.オプション[4], data.オプション[5],data.オプション[6]));
 				}
 
 				m_globalHookUse = jsonData.グローバル呼び出し機能;
+				m_showTabLv	= jsonData.タブ名固定階層;
+				m_showTabStrCount = jsonData.タブ名文字数指定;
 
 			}
 
@@ -420,8 +428,8 @@ namespace GraphicViewer
 
 			//ツールオプションのon/off
 			for (int i = 0; i < m_toolOption.Count; i++)
-			{
 				jsonData.機能オプションONOFF[i] = (m_toolOption[i] == 1 ? true : false);
+			{
 			}
 
 			//ヒストリーウインドウの情報
@@ -446,12 +454,15 @@ namespace GraphicViewer
 					data.m_Opt3No,
 					data.m_Opt4No,
 					data.m_CopyNo,
-					data.m_CCPNo
+					data.m_CCPNo,
+					data.m_colorIndex
 				};
 				jsonData.タブ履歴.Add(tmpData);
 			}
 
 			jsonData.グローバル呼び出し機能 = m_globalHookUse;
+			jsonData.タブ名固定階層 = m_showTabLv;
+			jsonData.タブ名文字数指定 = m_showTabStrCount;
 
 			var outputStr = JsonConvert.SerializeObject(jsonData);
 
@@ -890,6 +901,8 @@ namespace GraphicViewer
 
 		public List<tabHistory> タブ履歴 { get; set; } = new List<tabHistory>();
 		public int グローバル呼び出し機能 { get; set; } = 0;
+		public int タブ名固定階層 { get; set; } = 2;
+		public int タブ名文字数指定 { get; set; } = 3;
 
 		public readJsonType1(bool isCreate = false)
 		{
@@ -1003,10 +1016,13 @@ namespace GraphicViewer
 				機能オプションONOFF.Add(false);
 				機能オプションONOFF.Add(false);
 				機能オプションONOFF.Add(false);
+				機能オプションONOFF.Add(true);
 			}
 
 			//タブ履歴
 			グローバル呼び出し機能 = 0;
+			タブ名固定階層 = 2;
+			タブ名文字数指定 = 3;
 		}
 
 	};
