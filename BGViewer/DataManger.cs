@@ -15,19 +15,19 @@ namespace GraphicViewer
 	//-----------------------------------------------------------------------------------
 	//
 	//-----------------------------------------------------------------------------------
-	public class DataSet        //サムネイル1個の最小データ
+	public class DataSet		  //サムネイル1個の最小データ
 	{
-		public string m_fileName { set; get; }
-		public string m_summary { set; get; }
-		public bool m_isExist { set; get; }
-		public string m_genre { set; get; }
-		public string m_bigGenre { set; get; }      //まだ未使用のプロパティ
-		public bool m_isLineFeed { set; get; }      //まだ未使用のプロパティ。改行コード
+		public string	m_fileName { set; get; }
+		public string	m_summary { set; get; }
+		public bool		m_isExist { set; get; }
+		public string	m_genre { set; get; }
+		public string	m_bigGenre { set; get; }		//まだ未使用のプロパティ
+		public bool		m_isLineFeed { set; get; }		//まだ未使用のプロパティ。改行コード
 
-		public int m_x { set; get; }
-		public int m_y { set; get; }
-		public Color m_summaryColor { set; get; }
-		public string m_copyStr { set; get; }
+		public int		m_x { set; get; }
+		public	int		m_y { set; get; }
+		public Color	m_summaryColor { set; get; }
+		public string	m_copyStr { set; get; }
 
 		public Rectangle m_cutRect { set; get; }
 
@@ -74,17 +74,17 @@ namespace GraphicViewer
 	//-----------------------------------------------------------------------------------
 	public class GenreTree
 	{
-		public string m_genreName { set; get; }         //ジャンル名。ちょっと変更して識別子的に使用する名前に。ユニークさか必要な仕様にしてしまつたため。
-		public string m_showGenreName { set; get; }         //実際に表示してユーザーに見えるジャンル名
-		public HashSet<GenreTree> m_childGenre { set; get; }            //子達へのポインタ
-		public GenreTree m_parentGenre { set; get; }            //親へのポインタ
-		public Color m_treenodeColor { set; get; }          //ツリービュー上での表示色
-		public bool m_autoExpand { set; get; }          //ツリービュー下のノードを自動で開いてしまうか？
-		public int m_useBigThumbnail { set; get; }          //大型立ち絵を表示するか、する場合の枚数
+		public string				m_genreName			{ set; get; }			//ジャンル名。ちょっと変更して識別子的に使用する名前に。ユニークさか必要な仕様にしてしまつたため。
+		public string				m_showGenreName		{ set; get; }			//実際に表示してユーザーに見えるジャンル名
+		public HashSet<GenreTree>	m_childGenre		{ set; get; }			//子達へのポインタ
+		public GenreTree			m_parentGenre		{ set; get; }			//親へのポインタ
+		public Color				m_treenodeColor		{ set; get; }			//ツリービュー上での表示色
+		public bool					m_autoExpand		{ set; get; }			//ツリービュー下のノードを自動で開いてしまうか？
+		public int					m_useBigThumbnail	{ set; get; }			//大型立ち絵を表示するか、する場合の枚数
 
-		public List<string> m_dirList { set; get; } = new List<string>();
+		public List<string>			m_dirList			{ set; get; } = new List<string>();
 
-		public bool m_CCPFlg { set; get; }           //立ち絵でキャラ-服装-ポーズの
+		public bool					m_CCPFlg			{ set; get; }			//立ち絵でキャラ-服装-ポーズの
 
 		public GenreTree()
 		{
@@ -96,7 +96,6 @@ namespace GraphicViewer
 
 		public GenreTree(string showgenreName, string genreName, GenreTree parentTreeItem, int r = 0, int g = 0, int b = 0, bool expand = false, int useBig = 0, bool ccpFlg = false)
 		{
-
 			// カンマ区切りで分割して配列に格納する
 			string[] stArrayData = genreName.Split('\\');
 
@@ -123,25 +122,32 @@ namespace GraphicViewer
 
 	public class TabBackupDat
 	{
-		public string m_tabName { set; get; }
-		public int m_Opt1No { set; get; }
-		public int m_Opt2No { set; get; }
-		public int m_Opt3No { set; get; }
-		public int m_Opt4No { set; get; }
-		public int m_CopyNo { set; get; }
-		public int m_CCPNo { set; get; }
-		public int m_colorIndex { set; get; }
+		public string m_tabName			{ set; get; }
+		public int m_Opt1No				{ set; get; }
+		public int m_Opt2No				{ set; get; }
+		public int m_Opt3No				{ set; get; }
+		public int m_Opt4No				{ set; get; }
+		public int m_CopyNo				{ set; get; }
+		public int m_CCPNo				{ set; get; }
+		public int m_colorIndex			{ set; get; }
 
-		public TabBackupDat(string tabName, int opt1No, int opt2No, int opt3No, int opt4No, int copyNo, int ccpNo,int colorIndex )
+		public List<int>	m_childList	{ set;get; } = new List<int>();
+
+		public TabBackupDat(string tabName, int opt1No, int opt2No, int opt3No, int opt4No, int copyNo, int ccpNo,int colorIndex, params int[] child )
 		{
-			m_tabName = tabName;
-			m_Opt1No = opt1No;
-			m_Opt2No = opt2No;
-			m_Opt3No = opt3No;
-			m_Opt4No = opt4No;
-			m_CopyNo = copyNo;
-			m_CCPNo = ccpNo;
-			m_colorIndex = colorIndex;
+			m_tabName		= tabName;
+			m_Opt1No		= opt1No;
+			m_Opt2No		= opt2No;
+			m_Opt3No		= opt3No;
+			m_Opt4No		= opt4No;
+			m_CopyNo		= copyNo;
+			m_CCPNo			= ccpNo;
+			m_colorIndex	= colorIndex;
+
+			foreach( var tmp in child)
+			{
+				m_childList.Add( tmp );
+			}
 
 		}
 	}
@@ -173,8 +179,6 @@ namespace GraphicViewer
 		public int m_bigThumbnailWidth { set; get; }
 		public int m_bigThumbnailHeight { set; get; }
 
-
-
 		public static int m_optionStringCount = 5;
 
 		public string[] m_optionString { set; get; }
@@ -199,8 +203,8 @@ namespace GraphicViewer
 
 		public int m_globalHookUse { set; get; } = 0;
 
-		public int m_showTabLv { set; get; } = 2;
-		public int m_showTabStrCount { set; get; } = 3;
+		public int m_showTabLv { set; get; } = 3;
+		public int m_showTabStrCount { set; get; } = -1;
 
 		public readJsonType1 jsonData { set; get; }
 
@@ -211,30 +215,30 @@ namespace GraphicViewer
 
 		public DataManger()
 		{
-			m_dataMaster = new HashSet<DataSet>();
-			m_dataByGenre = new Dictionary<string, List<DataSet>>();
-			m_genreMaster = new HashSet<string>();
-			m_genreTreeMaster = new HashSet<GenreTree>();
-			m_genreTreeByGenreName = new Dictionary<string, GenreTree>();
-			m_faceRectByGenre = new Dictionary<string, Rectangle>();
-			m_thumbnailWidth = 80;
-			m_thumbnailHeight = 60;
-			m_summaryFontSize = 10;
-			m_copyString1 = "";
-			m_copyString2 = "";
-			m_copyString3 = "";
-			m_copyString4 = "";
-			m_copyString5 = "";
-			m_copyString6 = "";
-			m_copyString7 = "";
-			m_copyString8 = "";
-			m_copyString9 = "";
-			m_optionString = new string[m_optionStringCount];
-			m_bigThumbnailWidth = 160;
-			m_bigThumbnailHeight = 120;
-			m_optionStringLv2 = new string[10];
-			m_optionStringLv3 = new string[10];
-			m_optionStringLv4 = new string[10];
+			m_dataMaster			= new HashSet<DataSet>();
+			m_dataByGenre			= new Dictionary<string, List<DataSet>>();
+			m_genreMaster			= new HashSet<string>();
+			m_genreTreeMaster		= new HashSet<GenreTree>();
+			m_genreTreeByGenreName	= new Dictionary<string, GenreTree>();
+			m_faceRectByGenre		= new Dictionary<string, Rectangle>();
+			m_thumbnailWidth		= 80;
+			m_thumbnailHeight		= 60;
+			m_summaryFontSize		= 10;
+			m_copyString1			= "";
+			m_copyString2			= "";
+			m_copyString3			= "";
+			m_copyString4			= "";
+			m_copyString5			= "";
+			m_copyString6			= "";
+			m_copyString7			= "";
+			m_copyString8			= "";
+			m_copyString9			= "";
+			m_optionString			= new string[m_optionStringCount];
+			m_bigThumbnailWidth		= 160;
+			m_bigThumbnailHeight	= 120;
+			m_optionStringLv2		= new string[10];
+			m_optionStringLv3		= new string[10];
+			m_optionStringLv4		= new string[10];
 
 			for (int i = 0; i < 10; i++)
 			{
@@ -277,7 +281,6 @@ namespace GraphicViewer
 		{
 			try
 			{
-
 				//settingFilePath = System.IO.Path.Combine( System.Environment.CurrentDirectory, settingFilePath);
 
 				FileInfo fileInf = new FileInfo(settingFilePath);
@@ -291,53 +294,53 @@ namespace GraphicViewer
 				}
 
 				jsonData = JsonConvert.DeserializeObject<readJsonType1>(File.ReadAllText(settingFilePath));
-				jsonData.Create();
+				//jsonData.Create();
 
-				m_thumbnailWidth = jsonData.サムネイルサイズ[0];
-				m_thumbnailHeight = jsonData.サムネイルサイズ[1];
-				m_summaryFontSize = jsonData.フォントサイズ;
+				m_thumbnailWidth		= jsonData.サムネイルサイズ[0];
+				m_thumbnailHeight		= jsonData.サムネイルサイズ[1];
+				m_summaryFontSize		= jsonData.フォントサイズ;
 
 				//大型サムネイルサイズ取得
-				m_bigThumbnailWidth = jsonData.大型サムネイルサイズ[0];
-				m_bigThumbnailHeight = jsonData.大型サムネイルサイズ[1];
+				m_bigThumbnailWidth		= jsonData.大型サムネイルサイズ[0];
+				m_bigThumbnailHeight	= jsonData.大型サムネイルサイズ[1];
 
 				//window座標とか
-				m_left = jsonData.ウインドウ座標[0];
-				m_top = jsonData.ウインドウ座標[1];
-				m_width = jsonData.ウインドウ座標[2];
-				m_height = jsonData.ウインドウ座標[3];
-				m_splitSize = jsonData.画面分割幅;
+				m_left					= jsonData.ウインドウ座標[0];
+				m_top					= jsonData.ウインドウ座標[1];
+				m_width					= jsonData.ウインドウ座標[2];
+				m_height				= jsonData.ウインドウ座標[3];
+				m_splitSize				= jsonData.画面分割幅;
 
 				//コピー文関連
-				m_copyString1 = jsonData.コピー文[0];
-				m_copyString2 = jsonData.コピー文[1];
-				m_copyString3 = jsonData.コピー文[2];
-				m_copyString4 = jsonData.コピー文[3];
-				m_copyString5 = jsonData.コピー文[4];
-				m_copyString6 = jsonData.コピー文[5];
-				m_copyString7 = jsonData.コピー文[6];
-				m_copyString8 = jsonData.コピー文[7];
-				m_copyString9 = jsonData.コピー文[8];
+				m_copyString1			= jsonData.コピー文[0];
+				m_copyString2			= jsonData.コピー文[1];
+				m_copyString3			= jsonData.コピー文[2];
+				m_copyString4			= jsonData.コピー文[3];
+				m_copyString5			= jsonData.コピー文[4];
+				m_copyString6			= jsonData.コピー文[5];
+				m_copyString7			= jsonData.コピー文[6];
+				m_copyString8			= jsonData.コピー文[7];
+				m_copyString9			= jsonData.コピー文[8];
 
-				m_copyString1 = m_copyString1.Replace("\n", System.Environment.NewLine);
-				m_copyString2 = m_copyString2.Replace("\n", System.Environment.NewLine);
-				m_copyString3 = m_copyString3.Replace("\n", System.Environment.NewLine);
-				m_copyString4 = m_copyString4.Replace("\n", System.Environment.NewLine);
-				m_copyString5 = m_copyString5.Replace("\n", System.Environment.NewLine);
-				m_copyString6 = m_copyString6.Replace("\n", System.Environment.NewLine);
-				m_copyString7 = m_copyString7.Replace("\n", System.Environment.NewLine);
-				m_copyString8 = m_copyString8.Replace("\n", System.Environment.NewLine);
-				m_copyString9 = m_copyString9.Replace("\n", System.Environment.NewLine);
+				m_copyString1			= m_copyString1.Replace("\n", System.Environment.NewLine);
+				m_copyString2			= m_copyString2.Replace("\n", System.Environment.NewLine);
+				m_copyString3			= m_copyString3.Replace("\n", System.Environment.NewLine);
+				m_copyString4			= m_copyString4.Replace("\n", System.Environment.NewLine);
+				m_copyString5			= m_copyString5.Replace("\n", System.Environment.NewLine);
+				m_copyString6			= m_copyString6.Replace("\n", System.Environment.NewLine);
+				m_copyString7			= m_copyString7.Replace("\n", System.Environment.NewLine);
+				m_copyString8			= m_copyString8.Replace("\n", System.Environment.NewLine);
+				m_copyString9			= m_copyString9.Replace("\n", System.Environment.NewLine);
 
-				m_copyString1 = m_copyString1.Replace("\t", "	");
-				m_copyString2 = m_copyString2.Replace("\t", "	");
-				m_copyString3 = m_copyString3.Replace("\t", "	");
-				m_copyString4 = m_copyString4.Replace("\t", "	");
-				m_copyString5 = m_copyString5.Replace("\t", "	");
-				m_copyString6 = m_copyString6.Replace("\t", "	");
-				m_copyString7 = m_copyString7.Replace("\t", "	");
-				m_copyString8 = m_copyString8.Replace("\t", "	");
-				m_copyString9 = m_copyString9.Replace("\t", "	");
+				m_copyString1			= m_copyString1.Replace("\t", "	");
+				m_copyString2			= m_copyString2.Replace("\t", "	");
+				m_copyString3			= m_copyString3.Replace("\t", "	");
+				m_copyString4			= m_copyString4.Replace("\t", "	");
+				m_copyString5			= m_copyString5.Replace("\t", "	");
+				m_copyString6			= m_copyString6.Replace("\t", "	");
+				m_copyString7			= m_copyString7.Replace("\t", "	");
+				m_copyString8			= m_copyString8.Replace("\t", "	");
+				m_copyString9			= m_copyString9.Replace("\t", "	");
 
 				for (int i = 0; i < 5; i++)
 				{
@@ -368,22 +371,23 @@ namespace GraphicViewer
 				}
 
 				//ヒストリーウインドウの情報
-				m_historyLeft = jsonData.履歴ウインドウ座標[0];
-				m_historyTop = jsonData.履歴ウインドウ座標[1];
-				m_historyWidth = jsonData.履歴ウインドウ座標[2];
-				m_historyHeight = jsonData.履歴ウインドウ座標[3];
-				m_historyPosType = jsonData.履歴ウインドウ接続位置;
+				m_historyLeft		= jsonData.履歴ウインドウ座標[0];
+				m_historyTop		= jsonData.履歴ウインドウ座標[1];
+				m_historyWidth		= jsonData.履歴ウインドウ座標[2];
+				m_historyHeight		= jsonData.履歴ウインドウ座標[3];
+				m_historyPosType	= jsonData.履歴ウインドウ接続位置;
 
 				////タブバックアップの取得
 				foreach (var data in jsonData.タブ履歴)
 				{
-					m_tabBackupDat.Add(new TabBackupDat(data.タブ名, data.オプション[0], data.オプション[1], data.オプション[2], data.オプション[3], data.オプション[4], data.オプション[5],data.オプション[6]));
+					m_tabBackupDat.Add(new TabBackupDat(data.タブ名, data.オプション[0], data.オプション[1], data.オプション[2], data.オプション[3], data.オプション[4], data.オプション[5], data.オプション[6], data.チャイルド.ToArray()));
 				}
 
-				m_globalHookUse = jsonData.グローバル呼び出し機能;
-				m_showTabLv	= jsonData.タブ名固定階層;
-				m_showTabStrCount = jsonData.タブ名文字数指定;
+				m_globalHookUse		= jsonData.グローバル呼び出し機能;
+				m_showTabLv			= jsonData.タブ名固定階層;
+				m_showTabStrCount	= jsonData.タブ名文字数指定;
 
+				
 			}
 
 			catch (System.Exception ex)
@@ -428,9 +432,11 @@ namespace GraphicViewer
 
 			//ツールオプションのon/off
 			for (int i = 0; i < m_toolOption.Count; i++)
-				jsonData.機能オプションONOFF[i] = (m_toolOption[i] == 1 ? true : false);
 			{
+				if( jsonData.機能オプションONOFF.Count <= i ) jsonData.機能オプションONOFF.Add(false);
+				jsonData.機能オプションONOFF[i] = (m_toolOption[i] == 1 ? true : false);
 			}
+
 
 			//ヒストリーウインドウの情報
 
@@ -455,14 +461,18 @@ namespace GraphicViewer
 					data.m_Opt4No,
 					data.m_CopyNo,
 					data.m_CCPNo,
-					data.m_colorIndex
+					data.m_colorIndex,
 				};
+				tmpData.チャイルド = data.m_childList;
+
 				jsonData.タブ履歴.Add(tmpData);
 			}
 
 			jsonData.グローバル呼び出し機能 = m_globalHookUse;
-			jsonData.タブ名固定階層 = m_showTabLv;
-			jsonData.タブ名文字数指定 = m_showTabStrCount;
+			jsonData.タブ名固定階層			= m_showTabLv;
+			jsonData.タブ名文字数指定		= m_showTabStrCount;
+
+			
 
 			var outputStr = JsonConvert.SerializeObject(jsonData);
 
@@ -509,18 +519,18 @@ namespace GraphicViewer
 
 			//リストの読み込み
 			Regex regIgnore = new Regex("^\t*([^\r\n\"]*?)[\t ]*//.*");
-			Regex regLine	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*)");                                                      //基本の顔グラ
-			Regex regLine2	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*\"([^\r\n\"]*)\"");                                     //コピーストリング付きカオ
-			Regex regLine3	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*#(..)(..)(..)");                                                        //基本の顔グラ
-			Regex regLine4	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*\"(.*)\",[ \t]*#(..)(..)(..)");                                     //コピーストリング付きカオ
-			Regex regLine5	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*)");                           //個別かお切り出し位置付き
-			Regex regLine6	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]+?),[ \t]*\"([^\r\n\"]*)\"");           //主にユーリス用 ファイル名ではなく、テキストを置き換え文に使用
+			Regex regLine	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*)");																		//基本の顔グラ
+			Regex regLine2	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*\"([^\r\n\"]*)\"");												 //コピーストリング付きカオ
+			Regex regLine3	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*#(..)(..)(..)");																		  //基本の顔グラ
+			Regex regLine4	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*\"(.*)\",[ \t]*#(..)(..)(..)");												 //コピーストリング付きカオ
+			Regex regLine5	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*)");									//個別かお切り出し位置付き
+			Regex regLine6	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]+?),[ \t]*\"([^\r\n\"]*)\"");			  //主にユーリス用 ファイル名ではなく、テキストを置き換え文に使用
 
 			Regex regGenre					= new Regex("\t*※(.*)");
-			Regex regGenreRect				= new Regex("\t*※(.*),(.*),(.*),(.*),(.*)");                                     //ジャンル名, 顔座標x, y, w, h		
-			Regex regGenreStrColor			= new Regex("\t*※(.*),#(..)(..)(..)");                                           //ジャンル名, 文字色(#000000)
-			Regex regGenreRectColorExpand	= new Regex("\t*※(.*),(.*),(.*),(.*),(.*),#(..)(..)(..),(.*),(.*)");              //ジャンル名, 顔座標x, y, w, h, 文字色(#000000), ツリーを開いおくフラグ, 大型サムネイル使用するか
-			Regex regGenreRectColorExpandPlus = new Regex("\t*※(.*),(.*),(.*),(.*),(.*),#(..)(..)(..),(.*),(.*),(.*)");         //ジャンル名, 顔座標x, y, w, h, 文字色(#000000), ツリーを開いおくフラグ, 大型サムネイル使用するか、CCP構造を利用するか
+			Regex regGenreRect				= new Regex("\t*※(.*),(.*),(.*),(.*),(.*)");												 //ジャンル名, 顔座標x, y, w, h		
+			Regex regGenreStrColor			= new Regex("\t*※(.*),#(..)(..)(..)");														 //ジャンル名, 文字色(#000000)
+			Regex regGenreRectColorExpand	= new Regex("\t*※(.*),(.*),(.*),(.*),(.*),#(..)(..)(..),(.*),(.*)");				  //ジャンル名, 顔座標x, y, w, h, 文字色(#000000), ツリーを開いおくフラグ, 大型サムネイル使用するか
+			Regex regGenreRectColorExpandPlus = new Regex("\t*※(.*),(.*),(.*),(.*),(.*),#(..)(..)(..),(.*),(.*),(.*)");			//ジャンル名, 顔座標x, y, w, h, 文字色(#000000), ツリーを開いおくフラグ, 大型サムネイル使用するか、CCP構造を利用するか
 
 			Regex regGenreSeparator = new Regex("\t*_※(.*)");
 
@@ -698,13 +708,10 @@ namespace GraphicViewer
 									{
 										genreParentnameList.RemoveAt(genreParentnameList.Count - 1);
 									}
-
-									
-									
 								}
 								closeMarkCount++;
 								if(closeMarkCount > openMarkCount)
-                                {
+										  {
 									System.Windows.Forms.MessageBox.Show($"「※」と「_※」の個数で閉じる「_※」の数が多くおかしくなっています。{nowLineCount:d}行目");
 								}
 								continue;
@@ -839,10 +846,8 @@ namespace GraphicViewer
 
 						m_dataByGenre[nowTotalGenre].Add(tmpData);
 
-						
 
 					}
-
 
 				}
 			}
@@ -899,10 +904,12 @@ namespace GraphicViewer
 		public List<string> 置き換えテキストD { get; set; } = new List<string>();
 		public List<bool> 機能オプションONOFF { get; set; } = new List<bool>();
 
-		public List<tabHistory> タブ履歴 { get; set; } = new List<tabHistory>();
+		
 		public int グローバル呼び出し機能 { get; set; } = 0;
 		public int タブ名固定階層 { get; set; } = 2;
 		public int タブ名文字数指定 { get; set; } = 3;
+
+		public List<tabHistory> タブ履歴 { get; set; } = new List<tabHistory>();
 
 		public readJsonType1(bool isCreate = false)
 		{
@@ -1016,7 +1023,7 @@ namespace GraphicViewer
 				機能オプションONOFF.Add(false);
 				機能オプションONOFF.Add(false);
 				機能オプションONOFF.Add(false);
-				機能オプションONOFF.Add(true);
+				機能オプションONOFF.Add(false);
 			}
 
 			//タブ履歴
@@ -1031,5 +1038,6 @@ namespace GraphicViewer
 	{
 		public string タブ名 { get; set; }
 		public List<int> オプション { get; set; } = new List<int>();
+		public List<int> チャイルド { get; set; } = new List<int>();
 	};
 }

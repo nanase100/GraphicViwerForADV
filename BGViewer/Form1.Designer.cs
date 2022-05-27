@@ -154,7 +154,7 @@
 			// 
 			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(13, 825);
+			this.label1.Location = new System.Drawing.Point(13, 826);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(29, 12);
 			this.label1.TabIndex = 30;
@@ -166,7 +166,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.comboBox2.FormattingEnabled = true;
-			this.comboBox2.Location = new System.Drawing.Point(47, 818);
+			this.comboBox2.Location = new System.Drawing.Point(47, 819);
 			this.comboBox2.Name = "comboBox2";
 			this.comboBox2.Size = new System.Drawing.Size(211, 20);
 			this.comboBox2.TabIndex = 29;
@@ -182,7 +182,7 @@
 			this.groupBox2.Controls.Add(this.groupBox3);
 			this.groupBox2.Controls.Add(this.comboBox1);
 			this.groupBox2.Controls.Add(this.textBox3);
-			this.groupBox2.Location = new System.Drawing.Point(7, 495);
+			this.groupBox2.Location = new System.Drawing.Point(7, 496);
 			this.groupBox2.Name = "groupBox2";
 			this.groupBox2.Size = new System.Drawing.Size(263, 321);
 			this.groupBox2.TabIndex = 27;
@@ -718,11 +718,12 @@
 			this.treeView1.HideSelection = false;
 			this.treeView1.Location = new System.Drawing.Point(0, 3);
 			this.treeView1.Name = "treeView1";
-			this.treeView1.Size = new System.Drawing.Size(270, 486);
+			this.treeView1.Size = new System.Drawing.Size(270, 487);
 			this.treeView1.TabIndex = 7;
 			this.treeView1.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterExpand);
 			this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
 			this.treeView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseDown);
+			this.treeView1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseUp);
 			this.treeView1.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.treeView1_PreviewKeyDown);
 			// 
 			// pictureBox1
@@ -754,6 +755,7 @@
 			this.tabControl1.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl1_Selected);
 			this.tabControl1.Deselected += new System.Windows.Forms.TabControlEventHandler(this.tabControl1_Deselected);
 			this.tabControl1.Click += new System.EventHandler(this.tabControl1_Click);
+			this.tabControl1.DoubleClick += new System.EventHandler(this.tabControl1_DoubleClick);
 			this.tabControl1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tabControl1_KeyDown);
 			this.tabControl1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tabControl1_MouseDown);
 			this.tabControl1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.tabControl1_MouseMove);
@@ -866,11 +868,12 @@
 			// タブ名に表示する階層ToolStripMenuItem
 			// 
 			this.タブ名に表示する階層ToolStripMenuItem.Name = "タブ名に表示する階層ToolStripMenuItem";
-			this.タブ名に表示する階層ToolStripMenuItem.Size = new System.Drawing.Size(300, 22);
+			this.タブ名に表示する階層ToolStripMenuItem.Size = new System.Drawing.Size(342, 22);
 			this.タブ名に表示する階層ToolStripMenuItem.Text = "タブ名に表示する階層";
 			// 
 			// toolStripMenuItem2
 			// 
+			this.toolStripMenuItem2.Font = new System.Drawing.Font("Yu Gothic UI", 9F);
 			this.toolStripMenuItem2.Name = "toolStripMenuItem2";
 			this.toolStripMenuItem2.Size = new System.Drawing.Size(180, 23);
 			this.toolStripMenuItem2.Text = "2";
@@ -879,11 +882,12 @@
 			// タブ名に表示する最大文字数ToolStripMenuItem
 			// 
 			this.タブ名に表示する最大文字数ToolStripMenuItem.Name = "タブ名に表示する最大文字数ToolStripMenuItem";
-			this.タブ名に表示する最大文字数ToolStripMenuItem.Size = new System.Drawing.Size(300, 22);
-			this.タブ名に表示する最大文字数ToolStripMenuItem.Text = "タブ名に表示する最大文字数";
+			this.タブ名に表示する最大文字数ToolStripMenuItem.Size = new System.Drawing.Size(342, 22);
+			this.タブ名に表示する最大文字数ToolStripMenuItem.Text = "タブ名に表示する最大文字数 -1なら () の部分を非表示";
 			// 
 			// toolStripMenuItem3
 			// 
+			this.toolStripMenuItem3.Font = new System.Drawing.Font("Yu Gothic UI", 9F);
 			this.toolStripMenuItem3.Name = "toolStripMenuItem3";
 			this.toolStripMenuItem3.Size = new System.Drawing.Size(240, 23);
 			this.toolStripMenuItem3.Text = "3";
