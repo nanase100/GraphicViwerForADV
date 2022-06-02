@@ -62,7 +62,7 @@ namespace GraphicViewer
 		public string			m_copyString7		= "";
 		public string			m_copyString8		= "";
 		public string			m_copyString9		= "";
-		public int				m_preSelectSubCopyNo = -1;
+//		public int				m_preSelectSubCopyNo = -1;
 		public int				m_bigPicCount		 = 0;				//アクティブなジャンルセットに大型立ち絵データを含む枚数。
 		public int				m_bigPicPosY		= 0;			   //アクティブなジャンルセットに大型立ち絵データを含む枚数。
 		public List<DataSet>	m_activeDataSet		 = new List<DataSet>();
@@ -88,6 +88,8 @@ namespace GraphicViewer
 		List<CTabStatusInfo>			m_tabInfo		= new List<CTabStatusInfo>();	   //各タブごとの選択状況等を保存しておく変数
 		private List<List<bool>>		m_nodeStateWList= new List<List<bool>>();
 
+		public List<int>				m_preSelectSubCopyNo = new List<int>();
+
 		int			m_selectOptionStringNo	= 0;
 		int			m_selectOptionStringNo2 = 0;
 		int			m_selectOptionStringNo3 = 0;
@@ -98,6 +100,8 @@ namespace GraphicViewer
 		int			m_isPicDrageState	   = 0;
 		int			m_dragSY				= 0;
 		int			m_dragPreCount			= 0;
+
+		bool		m_receiveTabChangeFlg	= false;
 
 		
 		[DllImport("user32.dll", CharSet = CharSet.Unicode)]
@@ -555,6 +559,7 @@ namespace GraphicViewer
 			StockNodesState(m_nodeStateWList.Count-1);
 
 			m_tabInfo.Add( new CTabStatusInfo(m_selectOptionStringNo, m_selectOptionStringNo2, m_selectOptionStringNo3, m_selectOptionStringNo4,0,0, 0));
+			m_preSelectSubCopyNo.Add(-1);
 
 			if (treeView1.Nodes.Count > 0)
 			{
@@ -1090,35 +1095,38 @@ namespace GraphicViewer
 			//コピー文を2に切り替えると、サブ置き換えテキストも連動して切り替える機能
 			if( comboBox1.SelectedIndex == 1 )
 			{
-				if (radioButton10.Checked) m_preSelectSubCopyNo = 0;
-				if (radioButton11.Checked) m_preSelectSubCopyNo = 1;
-				if (radioButton12.Checked) m_preSelectSubCopyNo = 2;
-				if (radioButton13.Checked) m_preSelectSubCopyNo = 3;
-				if (radioButton14.Checked) m_preSelectSubCopyNo = 4;
-				if (radioButton16.Checked) m_preSelectSubCopyNo = 5;
-				if (radioButton16.Checked) m_preSelectSubCopyNo = 6;
-				if (radioButton17.Checked) m_preSelectSubCopyNo = 7;
-				if (radioButton18.Checked) m_preSelectSubCopyNo = 8;
-				if (radioButton19.Checked) m_preSelectSubCopyNo = 9;
+				if( m_receiveTabChangeFlg == false )
+				{
+					if (radioButton10.Checked) m_preSelectSubCopyNo[m_activeTabNo] = 0;
+					if (radioButton11.Checked) m_preSelectSubCopyNo[m_activeTabNo] = 1;
+					if (radioButton12.Checked) m_preSelectSubCopyNo[m_activeTabNo] = 2;
+					if (radioButton13.Checked) m_preSelectSubCopyNo[m_activeTabNo] = 3;
+					if (radioButton14.Checked) m_preSelectSubCopyNo[m_activeTabNo] = 4;
+					if (radioButton15.Checked) m_preSelectSubCopyNo[m_activeTabNo] = 5;
+					if (radioButton16.Checked) m_preSelectSubCopyNo[m_activeTabNo] = 6;
+					if (radioButton17.Checked) m_preSelectSubCopyNo[m_activeTabNo] = 7;
+					if (radioButton18.Checked) m_preSelectSubCopyNo[m_activeTabNo] = 8;
+					if (radioButton19.Checked) m_preSelectSubCopyNo[m_activeTabNo] = 9;
+				}
 		
 				radioButton19.Checked = true;
 			}
-			else if(m_preSelectSubCopyNo != -1 )
+			else if(m_preSelectSubCopyNo[m_activeTabNo] != -1 )
 			{
-				switch(m_preSelectSubCopyNo)
+				switch(m_preSelectSubCopyNo[m_activeTabNo])
 				{
 					case 0: radioButton10.Checked = true; break;
 					case 1: radioButton11.Checked = true; break;
 					case 2: radioButton12.Checked = true; break;
 					case 3: radioButton13.Checked = true; break;
 					case 4: radioButton14.Checked = true; break;
-		
+					case 5: radioButton15.Checked = true; break;
 					case 6: radioButton16.Checked = true; break;
 					case 7: radioButton17.Checked = true; break;
 					case 8: radioButton18.Checked = true; break;
 					case 9: radioButton19.Checked = true; break;
 				}
-				m_preSelectSubCopyNo = -1;
+				m_preSelectSubCopyNo[m_activeTabNo] = -1;
 			}
 			//-------------------------------------------------
 		}
@@ -1380,6 +1388,7 @@ namespace GraphicViewer
 		{
 			m_selectOptionStringNo2						 = no;
 			m_tabInfo[tabControl1.SelectedIndex].m_tabOpValue2 = no;
+			//m_preSelectSubCopyNo[m_activeTabNo] = no;
 		}
 
 		private void SetSelectOptionStringNo3(int no)
@@ -1576,17 +1585,19 @@ namespace GraphicViewer
 		private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			//m_tmpReceive = true;
+			m_receiveTabChangeFlg = true;
 
-			int index			  = tabControl1.SelectedIndex;
-			m_activeTabNo		  = index;
+			int index				= tabControl1.SelectedIndex;
+			m_activeTabNo			= index;
 			
-			treeView1.SelectedNode = m_tabList[index];
+			treeView1.SelectedNode	= m_tabList[index];
 
 			treeView1.SelectedNode.EnsureVisible();
 
 			SetValueRadio();
 
 			//m_tmpReceive = false;
+			m_receiveTabChangeFlg = false;
 		}
 
 		/// <summary>
@@ -1680,6 +1691,8 @@ namespace GraphicViewer
 				//ノードの開き状態の保持用
 				m_nodeStateWList.Add( new List<bool>() );
 				StockNodesState(m_nodeStateWList.Count-1);
+
+				m_preSelectSubCopyNo.Add(-1);
 			}
 		}
 
@@ -1811,6 +1824,8 @@ namespace GraphicViewer
 
 				m_activeTabNo = tabControl1.SelectedIndex;
 				pictureBox1.Select();
+
+				m_preSelectSubCopyNo.RemoveAt(index);
 
 			}
 
