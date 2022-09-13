@@ -30,13 +30,15 @@ namespace garu.Util
 		{
 			Dispose(true);
 			items.Clear();
-			RegistryKey regkey = Registry.CurrentUser.OpenSubKey( @"Software\Takechin\Susie\Plug-in", false);
-			
-			if( regkey != null )
-			{
-				Load((string)regkey.GetValue("Path"));
-				regkey.Close();
-			}
+
+			//※伊藤：注意 基本となるsusie.exeを起動するとレジストリにプラグインパスを書き込んでそこからもプラグインを読み込んでしまい、プラグイン衝突しやすくなるので注意
+			//RegistryKey regkey = Registry.CurrentUser.OpenSubKey( @"Software\Takechin\Susie\Plug-in", false);
+			//
+			//if( regkey != null )
+			//{
+			//	Load((string)regkey.GetValue("Path"));
+			//	regkey.Close();
+			//}
 
 			//Load(Application.StartupPath);
 			Load(Directory.GetCurrentDirectory());

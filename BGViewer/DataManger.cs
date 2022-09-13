@@ -127,13 +127,14 @@ namespace GraphicViewer
 		public int m_Opt2No				{ set; get; }
 		public int m_Opt3No				{ set; get; }
 		public int m_Opt4No				{ set; get; }
+		public int m_preSelectBank		{ set; get; }
 		public int m_CopyNo				{ set; get; }
 		public int m_CCPNo				{ set; get; }
 		public int m_colorIndex			{ set; get; }
 
 		public List<int>	m_childList	{ set;get; } = new List<int>();
 
-		public TabBackupDat(string tabName, int opt1No, int opt2No, int opt3No, int opt4No, int copyNo, int ccpNo,int colorIndex, params int[] child )
+		public TabBackupDat(string tabName, int opt1No, int opt2No, int opt3No, int opt4No, int copyNo, int ccpNo,int colorIndex, int preSelectBank, params int[] child )
 		{
 			m_tabName		= tabName;
 			m_Opt1No		= opt1No;
@@ -142,6 +143,7 @@ namespace GraphicViewer
 			m_Opt4No		= opt4No;
 			m_CopyNo		= copyNo;
 			m_CCPNo			= ccpNo;
+			m_preSelectBank = preSelectBank;
 			m_colorIndex	= colorIndex;
 
 			foreach( var tmp in child)
@@ -380,7 +382,7 @@ namespace GraphicViewer
 				////タブバックアップの取得
 				foreach (var data in jsonData.タブ履歴)
 				{
-					m_tabBackupDat.Add(new TabBackupDat(data.タブ名, data.オプション[0], data.オプション[1], data.オプション[2], data.オプション[3], data.オプション[4], data.オプション[5], data.オプション[6], data.チャイルド.ToArray()));
+					m_tabBackupDat.Add(new TabBackupDat(data.タブ名, data.オプション[0], data.オプション[1], data.オプション[2], data.オプション[3], data.オプション[4], data.オプション[5], data.オプション[6],data.オプション[7], data.チャイルド.ToArray()));
 				}
 
 				m_globalHookUse		= jsonData.グローバル呼び出し機能;
@@ -462,6 +464,7 @@ namespace GraphicViewer
 					data.m_CopyNo,
 					data.m_CCPNo,
 					data.m_colorIndex,
+					data.m_preSelectBank,
 				};
 				tmpData.チャイルド = data.m_childList;
 

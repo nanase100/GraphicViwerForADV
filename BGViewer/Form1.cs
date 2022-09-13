@@ -166,7 +166,7 @@ namespace GraphicViewer
 			foreach( var tmp in m_tabList )
 			{
 				if(tmp == null )continue;
-				m_dataManager.m_tabBackupDat.Add( new TabBackupDat(tmp.FullPath, m_tabInfo[i].m_tabOpValue, m_tabInfo[i].m_tabOpValue2, m_tabInfo[i].m_tabOpValue3, m_tabInfo[i].m_tabOpValue4, m_tabInfo[i].m_tabOpCopyID, m_tabInfo[i].m_tabCCPNo, m_tabInfo[i].m_colorIndex, m_tabInfo[i].m_childIndexList.ToArray()) );
+				m_dataManager.m_tabBackupDat.Add( new TabBackupDat(tmp.FullPath, m_tabInfo[i].m_tabOpValue, m_tabInfo[i].m_tabOpValue2, m_tabInfo[i].m_tabOpValue3, m_tabInfo[i].m_tabOpValue4, m_tabInfo[i].m_tabOpCopyID, m_tabInfo[i].m_tabCCPNo, m_tabInfo[i].m_colorIndex, m_preSelectSubCopyNo[i], m_tabInfo[i].m_childIndexList.ToArray()) );
 				i++;
 			}
 
@@ -304,7 +304,7 @@ namespace GraphicViewer
 				treeView1.SelectedNode = ChangeTabByFullpath(tmp.m_tabName);
 				if(treeView1.SelectedNode == null ) continue;
 				AddTab();
-				
+				m_preSelectSubCopyNo[i] = tmp.m_preSelectBank;
 				m_tabInfo[i].SetVal(tmp.m_Opt1No,tmp.m_Opt2No, tmp.m_Opt3No, tmp.m_Opt4No, tmp.m_CopyNo, tmp.m_CCPNo, tmp.m_colorIndex, tmp.m_childList.ToArray());
 
 				i++;
@@ -1705,6 +1705,7 @@ namespace GraphicViewer
 
 			m_tabList.Insert(index, treeTab);
 			m_tabInfo.Insert(index, tabinfo);
+			m_preSelectSubCopyNo.Insert(index,-1);
 			m_nodeStateWList.Insert( index,openState );
 
 			tabControl1.TabPages.Insert(index,"ほあああああ");
