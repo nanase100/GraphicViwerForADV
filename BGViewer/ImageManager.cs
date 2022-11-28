@@ -70,7 +70,7 @@ namespace GraphicViewer
         {
             foreach ( KeyValuePair<string, ImageSet> tmpImg in m_imageDictionary )
             {
-                tmpImg.Value.thmbnailImage.Save(path + tmpImg.Key + ".png" );
+//                tmpImg.Value.thmbnailImage.Save(path + tmpImg.Key + ".png" );
             }
         }
 
@@ -94,7 +94,7 @@ namespace GraphicViewer
                     //tmpImg.mainImage	= Image.FromStream(fs);
 					tmpImg.mainImage	=	(Image)m_susie.GetPicture(tmpData.m_fileName);
                     fileNameOnly		= System.IO.Path.GetFileNameWithoutExtension(tmpData.m_fileName);
-
+					
                     //サムネイル作成
                     try
                     {
@@ -128,7 +128,8 @@ namespace GraphicViewer
                         }
 
                         tmpImg.mainImage.Dispose();
-                        m_imageDictionary.Add(fileNameOnly, tmpImg);
+                        //m_imageDictionary.Add(fileNameOnly, tmpImg);
+						m_imageDictionary.Add(tmpData.m_fileName, tmpImg);
                     }
                     catch
                     {
@@ -183,7 +184,6 @@ namespace GraphicViewer
                             srcRect = refData.m_cutRect;
                             destRect = new System.Drawing.Rectangle(0, 0, thumbWidth, thumbHeight);
 
-
                             tmpImg.thmbnailImage = new Bitmap(thumbWidth, thumbHeight);
                             Graphics.FromImage(tmpImg.thmbnailImage).DrawImage(tmpImg.mainImage, destRect, srcRect, GraphicsUnit.Pixel);
                         }
@@ -191,7 +191,8 @@ namespace GraphicViewer
                         tmpImg.thmbnailImage = new Bitmap(thumbWidth, thumbHeight);
                         Graphics.FromImage(tmpImg.thmbnailImage).DrawImage(tmpImg.mainImage, destRect, srcRect, GraphicsUnit.Pixel);
                         tmpImg.mainImage.Dispose();
-                        m_imageDictionary.Add(fileNameOnly, tmpImg);
+                        //m_imageDictionary.Add(fileNameOnly, tmpImg);
+						m_imageDictionary.Add(refData.m_fileName, tmpImg);
 
                     }
                     catch( System.Exception ex)

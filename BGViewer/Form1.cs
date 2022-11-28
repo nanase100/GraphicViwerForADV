@@ -80,7 +80,7 @@ namespace GraphicViewer
 
 		KeyboardHook hooker = new HongliangSoft.Utilities.Gui.KeyboardHook(Check_HoldHotkey);
 
-		HotKey hotKey = null;
+		HotKey[]		m_hotKey			= new HotKey[9] {null,null,null,null,null,null,null,null,null};
 		Form3			m_form3;
 		int				m_activeTabNo		= 0;
 
@@ -213,7 +213,7 @@ namespace GraphicViewer
 
 			m_dataManager.SettingSave("option.txt");
 
-			if( hotKey != null ) hotKey.Dispose();
+			for( i = 0; i < m_hotKey.Length; i++ ) if(m_hotKey[i] != null ) m_hotKey[i].Dispose();
 		}
 
 		
@@ -325,7 +325,15 @@ namespace GraphicViewer
 			}
 
 
-//			hotKey = new HotKey(0,Keys.F11, openScript );
+			m_hotKey[0] = new HotKey( MOD_KEY.CONTROL,Keys.D1, HotkeyOpenPanel_01 );
+			m_hotKey[1] = new HotKey( MOD_KEY.CONTROL,Keys.D2, HotkeyOpenPanel_02 );
+			m_hotKey[2] = new HotKey( MOD_KEY.CONTROL,Keys.D3, HotkeyOpenPanel_03 );
+			m_hotKey[3] = new HotKey( MOD_KEY.CONTROL,Keys.D4, HotkeyOpenPanel_04 );
+			m_hotKey[4] = new HotKey( MOD_KEY.CONTROL,Keys.D5, HotkeyOpenPanel_05 );
+			m_hotKey[5] = new HotKey( MOD_KEY.CONTROL,Keys.D6, HotkeyOpenPanel_06 );
+			m_hotKey[6] = new HotKey( MOD_KEY.CONTROL,Keys.D7, HotkeyOpenPanel_07 );
+			m_hotKey[7] = new HotKey( MOD_KEY.CONTROL,Keys.D8, HotkeyOpenPanel_08 );
+			m_hotKey[8] = new HotKey( MOD_KEY.CONTROL,Keys.D9, HotkeyOpenPanel_09 );
 	//		hotKey.Dispose();
 		//	hotKey = new HotKey(0,Keys.F11, openScript );
 			
@@ -334,10 +342,73 @@ namespace GraphicViewer
 			UpdateTabNameAll();
 		}
 
+
+		public void HotkeyOpenPanel_01()
+		{
+			SendHotkeyOpenPanel(0);
+		}
+
+		public void HotkeyOpenPanel_02()
+		{
+			SendHotkeyOpenPanel(1);
+		}
+
+		public void HotkeyOpenPanel_03()
+		{
+			SendHotkeyOpenPanel(2);
+		}
+
+		public void HotkeyOpenPanel_04()
+		{
+			SendHotkeyOpenPanel(3);
+		}
+
+		public void HotkeyOpenPanel_05()
+		{
+			SendHotkeyOpenPanel(4);
+		}
+
+		public void HotkeyOpenPanel_06()
+		{
+			SendHotkeyOpenPanel(5);
+		}
+
+		public void HotkeyOpenPanel_07()
+		{
+			SendHotkeyOpenPanel(6);
+		}
+
+		public void HotkeyOpenPanel_08()
+		{
+			SendHotkeyOpenPanel(7);
+		}
+
+		public void HotkeyOpenPanel_09()
+		{
+			SendHotkeyOpenPanel(8);
+		}
+
+		public void SendHotkeyOpenPanel( int panelNO )
+		{
+			string			totalParentName = "";
+			TreeNode		tmpNode			= treeView1.SelectedNode.Parent;
+
+			//階層を上に登りつつ名前を結合して最終的な名前にしていく
+			while (tmpNode != null)
+			{
+				totalParentName	= totalParentName.Insert(0, tmpNode.Text);
+				tmpNode			= tmpNode.Parent;
+			}
+			string nowGenre = totalParentName + treeView1.SelectedNode.Text;
+			if( m_dataManager.m_genreTreeByGenreName[nowGenre].m_useBigThumbnail > 0 ) panelNO++;
+
+			ShowGraphic(panelNO,1,true);
+		}
 		//未実装機能
 		//cs2のデバッグログなどから現在のスクリプトを探して開こうとしているがこの努力の塊の鉄塊はいったい・・・・？
 		public void openScript()
 		{
+
 			IntPtr tmphWnd;
 
 			gamehWnd = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "CoreSystem2", IntPtr.Zero);
@@ -422,7 +493,7 @@ namespace GraphicViewer
 		//-----------------------------------------------------------------------------------
 		private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
 		{
-		   m_tabInfo[m_activeTabNo].m_scrollPos = vScrollBar1.Value;
+			m_tabInfo[m_activeTabNo].m_scrollPos = vScrollBar1.Value;
 			DoPaint();
 			UpdateCount();
 		}
@@ -503,17 +574,15 @@ namespace GraphicViewer
 			//tabControl1.SelectedTab.ForeColor = Color.Tomato;
 
 			tabControl1.Invalidate();
-
 			
-
 		}
 
 		//-----------------------------------------------------------------------------------
 		//win32 apiメッセージでctr+vを送る。秀丸に貼り付けるオプション用1
 		//-----------------------------------------------------------------------------------
-		public void SendKey()
+		public void SendHidemaru(bool isForceSend =false )
 		{
-			if( menuItemSub3.Checked == false ) return;
+			if( menuItemSub3.Checked == false && isForceSend == false ) return;
 
 			bool	bresult;
 			IntPtr  hWnd;
@@ -691,7 +760,8 @@ namespace GraphicViewer
 							}
 
 							//描画前ロード
-							if (m_imgManager.m_imageDictionary.ContainsKey(fileNameNoExe) == false)
+							//if (m_imgManager.m_imageDictionary.ContainsKey(fileNameNoExe) == false)
+							if (m_imgManager.m_imageDictionary.ContainsKey(tmpData.m_fileName) == false)
 							{
 								if(tmpData.m_useBig == false)		m_imgManager.LoadImage(tmpData, m_thumbnailWidth, m_thumbnailHeight, m_dataManager.m_faceRectByGenre);
 								else								m_imgManager.LoadImage(tmpData, m_dataManager.m_bigThumbnailWidth, m_dataManager.m_bigThumbnailHeight);
@@ -699,7 +769,8 @@ namespace GraphicViewer
 
 							m_activeDataSet[count].m_x = offsetX + posX;
 							m_activeDataSet[count].m_y = posY;
-							g.DrawImage(m_imgManager.m_imageDictionary[fileNameNoExe].thmbnailImage, offsetX + posX, posY, m_thumbnailWidth, m_thumbnailHeight);
+							//g.DrawImage(m_imgManager.m_imageDictionary[fileNameNoExe].thmbnailImage, offsetX + posX, posY, m_thumbnailWidth, m_thumbnailHeight);
+							g.DrawImage(m_imgManager.m_imageDictionary[tmpData.m_fileName].thmbnailImage, offsetX + posX, posY, m_thumbnailWidth, m_thumbnailHeight);
 
 
 							//----サムネイル説明分の表示
@@ -737,13 +808,15 @@ namespace GraphicViewer
 						else
 						{
 							//描画前ロード
-							if (m_imgManager.m_imageDictionary.ContainsKey(fileNameNoExe) == false)
+							//if (m_imgManager.m_imageDictionary.ContainsKey(fileNameNoExe) == false)
+							if (m_imgManager.m_imageDictionary.ContainsKey(tmpData.m_fileName) == false)
 							{
 								m_imgManager.LoadImage(tmpData, m_dataManager.m_bigThumbnailWidth, m_dataManager.m_bigThumbnailHeight);
 							}
 							m_activeDataSet[count].m_x = 0;
 							m_activeDataSet[count].m_y = count * m_dataManager.m_bigThumbnailHeight;
-							g.DrawImage(m_imgManager.m_imageDictionary[fileNameNoExe].thmbnailImage, 0, m_bigPicPosY + count * m_dataManager.m_bigThumbnailHeight, m_dataManager.m_bigThumbnailWidth, m_dataManager.m_bigThumbnailHeight);
+							//g.DrawImage(m_imgManager.m_imageDictionary[fileNameNoExe].thmbnailImage, 0, m_bigPicPosY + count * m_dataManager.m_bigThumbnailHeight, m_dataManager.m_bigThumbnailWidth, m_dataManager.m_bigThumbnailHeight);
+							g.DrawImage(m_imgManager.m_imageDictionary[tmpData.m_fileName].thmbnailImage, 0, m_bigPicPosY + count * m_dataManager.m_bigThumbnailHeight, m_dataManager.m_bigThumbnailWidth, m_dataManager.m_bigThumbnailHeight);
 						}
 
 						count++;
@@ -910,43 +983,51 @@ namespace GraphicViewer
 		public void ClickAction( MouseEventArgs e)
 		{
 			if( treeView1.SelectedNode == null ) return;
-				
-			string			optionString		= textBox1.Text;
-			string			optionString2		= textBox2.Text;
-			string		  optionString3	   = textBox4.Text;
-			string		  optionString4	   = textBox5.Text;
-			string			fileName			= "";
+			
 			int				panelNo				= 0;
 			int				scrollPosY			= vScrollBar1.Value;
-			TreeNode		tmpNode			 = treeView1.SelectedNode.Parent;
+			TreeNode		tmpNode				= treeView1.SelectedNode.Parent;
 		
 			//クリックした位置から何番目の画像を選んだか割り出す。改行コードがある場合、ずれるので計算だけではだめ
-			int nowPanelNo = 0;
+			
 			foreach (DataSet tmpData in m_activeDataSet )
 			{
 				if( tmpData.m_x <= e.X && e.X <= tmpData.m_x+m_thumbnailWidth && tmpData.m_y <= e.Y && e.Y <= tmpData.m_y+m_thumbnailHeight )
 				{
-					panelNo = nowPanelNo;
+					panelNo = panelNo;
 					break;
 				}
-				nowPanelNo++;
+				panelNo++;
 			}
 
 			//大立ち絵チェック
-			if( m_bigPicCount > 0 )
-			{
-				if( e.X <= m_dataManager.m_bigThumbnailWidth )
-				{
-					nowPanelNo = 0;
-					if( e.Y - m_bigPicPosY >= m_dataManager.m_bigThumbnailHeight ) nowPanelNo = 1;
-				}
-			}
-
-			panelNo = nowPanelNo;
+			if( m_bigPicCount > 0 && e.X <= m_dataManager.m_bigThumbnailWidth ) panelNo = 0;
 
 			if (panelNo >= m_activeDataSet.Count) return;
 
-			if (e.Button == MouseButtons.Right || e.Button == MouseButtons.Middle )
+			int buttonType = 0;
+			switch(e.Button)
+			{
+				case MouseButtons.Left:		buttonType = 0; break;
+				case MouseButtons.Right:	buttonType = 1; break;
+				case MouseButtons.Middle:	buttonType = 2; break;
+			}
+
+			ShowGraphic( panelNo, buttonType );
+
+		}
+
+
+		public void ShowGraphic( int panelNo, int buttonType, bool isSend = false )
+		{ 
+			string			fileName			= "";
+							
+			string			optionString		= textBox1.Text;
+			string			optionString2		= textBox2.Text;
+			string			optionString3		= textBox4.Text;
+			string			optionString4		= textBox5.Text;
+
+			if ( buttonType == 1 || buttonType == 2 )
 			{
 				fileName	= m_activeDataSet[panelNo].m_fileName;
 				
@@ -956,19 +1037,20 @@ namespace GraphicViewer
 
 				foreach( var tmp in m_activeDataSet[panelNo].m_dirList ) folder.Add( tmp );
 
-				m_form3.AddFav( fileName, m_activeDataSet[panelNo].m_summary, m_activeDataSet[panelNo].m_fileName, treeView1.SelectedNode.Text, folder, m_activeDataSet[panelNo].m_copyStr );
+				//m_form3.AddFav( fileName, m_activeDataSet[panelNo].m_summary, m_activeDataSet[panelNo].m_fileName, treeView1.SelectedNode.Text, folder, m_activeDataSet[panelNo].m_copyStr );
+				m_form3.AddFav( m_activeDataSet[panelNo].m_fileName, m_activeDataSet[panelNo].m_summary, m_activeDataSet[panelNo].m_fileName, treeView1.SelectedNode.Text, folder, m_activeDataSet[panelNo].m_copyStr );
 
 				if( m_activeDataSet[panelNo].m_copyStr != "" ) fileName =  m_activeDataSet[panelNo].m_copyStr;
 				
 				string copyString = textBox3.Text;
 
-				//森田さん専用追加機能→標準になったよー
-				if ((Control.ModifierKeys & Keys.Control) == Keys.Control || e.Button == MouseButtons.Middle)
-				{
-					copyString = "(1)";
-				}
+				//Ctrlキーを押しながら右クリック、または中クリックでファイル名のみ取得のインスタントコピーになる
+				//if ((Control.ModifierKeys & Keys.Control) == Keys.Control || buttonType == 2 )
+				//{
+				//	copyString = "(1)";
+				//}
 
-				//森田さん専用機能2　結合コピー。キーを押しながらコピーすると、クリップボードに改行とともに追記していくくスタイル
+				//結合コピー。キーを押しながらコピーすると、クリップボードに改行とともに追記していくくスタイル
 				if ((Control.ModifierKeys & Keys.Alt) == Keys.Alt)
 				{
 					string tmpStr = Clipboard.GetText();
@@ -984,9 +1066,7 @@ namespace GraphicViewer
 
 				//ワイルドカード的な指定の置き換え実行
 				copyString = copyString.Replace("(0)", fileName);
-
 				
-
 				//--------------------
 				string ReplaceExEscape( string src, string targetStr, string repStr )
 				{
@@ -1014,9 +1094,7 @@ namespace GraphicViewer
 
 				copyString = ReplaceExEscape( copyString, @"\n", System.Environment.NewLine );
 				copyString = ReplaceExEscape( copyString, @"\t", "	");
-
 				
-
 				//フォルダ階層をテキスト置き換え
 				copyString = copyString.Replace("(d0)", m_activeDataSet[panelNo].m_dirList[0]);
 				
@@ -1046,7 +1124,7 @@ namespace GraphicViewer
 				Clipboard.SetText(copyString);
 				this.Text = copyString;
 
-				this.SendKey();
+				this.SendHidemaru(isSend);
 			} 
 			else
 			{

@@ -3,7 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <StartArguments>
     </StartArguments>
-    <StartWorkingDirectory>D:\恋姫\戦国ex\svn\_report\戦国恋姫EX弐立ち絵ツール</StartWorkingDirectory>
+    <StartWorkingDirectory>D:\黒獣外伝\svn\_tool\背景GraphicViewer</StartWorkingDirectory>
     <RemoteDebugEnabled>false</RemoteDebugEnabled>
     <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
   </PropertyGroup>

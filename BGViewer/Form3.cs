@@ -177,7 +177,8 @@ namespace GraphicViewer
 			for( int i = loopCount; i >= 0; i-- )
 			{
 				fileNameNoExe = System.IO.Path.GetFileNameWithoutExtension( m_history[i].fileName );
-				g.DrawImage(m_imgManager.m_imageDictionary[fileNameNoExe].thmbnailImage, posX, posY, m_rDataManager.m_thumbnailWidth, m_rDataManager.m_thumbnailHeight);
+				//g.DrawImage(m_imgManager.m_imageDictionary[fileNameNoExe].thmbnailImage, posX, posY, m_rDataManager.m_thumbnailWidth, m_rDataManager.m_thumbnailHeight);
+				g.DrawImage(m_imgManager.m_imageDictionary[m_history[i].fileName ].thmbnailImage, posX, posY, m_rDataManager.m_thumbnailWidth, m_rDataManager.m_thumbnailHeight);
 
 				//----サムネイル説明分の表示
 				if (checkBox3.Checked == true)
@@ -343,7 +344,7 @@ namespace GraphicViewer
 			Clipboard.SetText(copyString);
 			this.Text = "【履歴ウインドウ】 - " + copyString;
 
-			m_rForm1.SendKey();
+			m_rForm1.SendHidemaru();
 		}
 
 		private void checkBox2_CheckedChanged(object sender, EventArgs e)
