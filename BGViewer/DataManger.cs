@@ -522,7 +522,7 @@ namespace GraphicViewer
 
 			//リストの読み込み
 			Regex regIgnore = new Regex("^\t*([^\r\n\"]*?)[\t ]*//.*");
-			Regex regLine	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*)");																		//基本の顔グラ
+			Regex regLine	= new Regex("^\t*([^\r\n\"]*?):[ \t]*([^\r\n\"]*)");																		//基本の顔グラ
 			Regex regLine2	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*\"([^\r\n\"]*)\"");												 //コピーストリング付きカオ
 			Regex regLine3	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*#(..)(..)(..)");																		  //基本の顔グラ
 			Regex regLine4	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*\"(.*)\",[ \t]*#(..)(..)(..)");												 //コピーストリング付きカオ
