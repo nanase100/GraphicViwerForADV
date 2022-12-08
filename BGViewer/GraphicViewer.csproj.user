@@ -3,9 +3,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <StartArguments>
     </StartArguments>
-    <StartWorkingDirectory>
-    </StartWorkingDirectory>
+    <StartWorkingDirectory>D:\黒獣外伝\svn\_tool\背景GraphicViewer%28差分対応%29</StartWorkingDirectory>
     <RemoteDebugEnabled>false</RemoteDebugEnabled>
+    <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <StartArguments>

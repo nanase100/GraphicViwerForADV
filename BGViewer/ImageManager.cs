@@ -70,14 +70,14 @@ namespace GraphicViewer
         {
             foreach ( KeyValuePair<string, ImageSet> tmpImg in m_imageDictionary )
             {
-                tmpImg.Value.thmbnailImage.Save(path + tmpImg.Key + ".png" );
+//                tmpImg.Value.thmbnailImage.Save(path + tmpImg.Key + ".png" );
             }
         }
 
 		//-----------------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------------
-        public void LoadImage(HashSet<DataSet> listData, int thumbWidth = 80, int thumbHeight = 60, Dictionary<string, Rectangle> faceRectDictionary = null )
+  /*      public void LoadImage(HashSet<DataSet> listData, int thumbWidth = 80, int thumbHeight = 60, Dictionary<string, Rectangle> faceRectDictionary = null )
         {
             ImageSet tmpImg;
             FileStream fs;
@@ -94,7 +94,7 @@ namespace GraphicViewer
                     //tmpImg.mainImage	= Image.FromStream(fs);
 					tmpImg.mainImage	=	(Image)m_susie.GetPicture(tmpData.m_fileName);
                     fileNameOnly		= System.IO.Path.GetFileNameWithoutExtension(tmpData.m_fileName);
-
+					
                     //サムネイル作成
                     try
                     {
@@ -128,7 +128,8 @@ namespace GraphicViewer
                         }
 
                         tmpImg.mainImage.Dispose();
-                        m_imageDictionary.Add(fileNameOnly, tmpImg);
+                        //m_imageDictionary.Add(fileNameOnly, tmpImg);
+						m_imageDictionary.Add(tmpData.m_fileName, tmpImg);
                     }
                     catch
                     {
@@ -137,7 +138,7 @@ namespace GraphicViewer
                 fs.Dispose();
             }
         }
-
+  */
 		//-----------------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------------
@@ -145,17 +146,36 @@ namespace GraphicViewer
 		{
 			ImageSet	tmpImg = new ImageSet();
 			FileStream	fs;
-			string		fileNameOnly;
+			string		baseName = refData.m_fileName;
+	
+			string		filePath	= System.IO.Path.GetDirectoryName(baseName);
+			
+
+
+			//差分時データ
+			string		diffName ="";
+			bool		isDiff = false;
+			Image		diffImage = null;
+
+			//差分化が必要かのチェックと前準備
+			if( baseName.IndexOf(" ") != -1 && baseName.IndexOf("hg3") != -1 )
+			{
+				diffName = baseName.Replace(" ","_0");
+				baseName = baseName.Substring(0,baseName.IndexOf(" ")) + "_1.hg3";
+				diffImage = (Image)m_susie.GetPicture(diffName);
+
+				isDiff = true;
+				if( diffImage == null )isDiff = false;
+			}
 
             try
             {
-                using (fs = File.OpenRead(refData.m_fileName))
+                using (fs = File.OpenRead(baseName))
                 {
 
                     //ベース画像読み込み
                     //tmpImg.mainImage	= Image.FromStream(fs);
-                    tmpImg.mainImage	= (Image)m_susie.GetPicture(refData.m_fileName);
-                    fileNameOnly		= System.IO.Path.GetFileNameWithoutExtension(refData.m_fileName);
+                    tmpImg.mainImage	= (Image)m_susie.GetPicture(baseName);
 
                     //サムネイル作成
                     try
@@ -183,15 +203,29 @@ namespace GraphicViewer
                             srcRect = refData.m_cutRect;
                             destRect = new System.Drawing.Rectangle(0, 0, thumbWidth, thumbHeight);
 
-
                             tmpImg.thmbnailImage = new Bitmap(thumbWidth, thumbHeight);
                             Graphics.FromImage(tmpImg.thmbnailImage).DrawImage(tmpImg.mainImage, destRect, srcRect, GraphicsUnit.Pixel);
+
                         }
+
+						if( isDiff )
+						{
+							Bitmap diffTmpeBMP = new Bitmap(diffImage);
+				
+							var offsetPos = GetDiffOffsetPos(diffName);
+				
+							diffTmpeBMP.MakeTransparent(Color.Lime);
+							Graphics.FromImage(tmpImg.mainImage).DrawImage(diffTmpeBMP, offsetPos.x, offsetPos.y, diffImage.Width, diffImage.Height);
+						}
 
                         tmpImg.thmbnailImage = new Bitmap(thumbWidth, thumbHeight);
                         Graphics.FromImage(tmpImg.thmbnailImage).DrawImage(tmpImg.mainImage, destRect, srcRect, GraphicsUnit.Pixel);
+
+						
+
                         tmpImg.mainImage.Dispose();
-                        m_imageDictionary.Add(fileNameOnly, tmpImg);
+                        
+						m_imageDictionary.Add(refData.m_fileName, tmpImg);
 
                     }
                     catch( System.Exception ex)
@@ -205,6 +239,28 @@ namespace GraphicViewer
 
                 System.Windows.Forms.MessageBox.Show(ex.Message);
             }
+
+		}
+
+
+		private (int x, int y)GetDiffOffsetPos( string name)
+		{
+			int retX = 0, retY = 0;
+			using( System.IO.FileStream diffHg3 = new System.IO.FileStream(name,System.IO.FileMode.Open) )
+			{ 
+			
+				byte[] buf = new byte[2]; // データ格納用配列
+
+				diffHg3.Seek(48,System.IO.SeekOrigin.Begin);
+				diffHg3.Read(buf, 0, 2);
+				retX = BitConverter.ToInt16(buf,0);
+
+				diffHg3.Seek(52,System.IO.SeekOrigin.Begin);
+				diffHg3.Read(buf, 0, 2);
+				retY = BitConverter.ToInt16(buf,0);
+			}
+
+			return ( retX, retY );
 		}
 
 
