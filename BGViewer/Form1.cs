@@ -62,7 +62,6 @@ namespace GraphicViewer
 		public string			m_copyString7		= "";
 		public string			m_copyString8		= "";
 		public string			m_copyString9		= "";
-//		public int				m_preSelectSubCopyNo = -1;
 		public int				m_bigPicCount		 = 0;				//アクティブなジャンルセットに大型立ち絵データを含む枚数。
 		public int				m_bigPicPosY		= 0;			   //アクティブなジャンルセットに大型立ち絵データを含む枚数。
 		public List<DataSet>	m_activeDataSet		 = new List<DataSet>();
@@ -130,7 +129,6 @@ namespace GraphicViewer
 			m_mePath						= System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
 			this.pictureBox1.MouseWheel	 += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseWheel);
 			this.tabControl1.MouseWheel		+= new System.Windows.Forms.MouseEventHandler(this.tabControl1_MouseWheel);
-
 
 			//カレントディレクトリを取得する
 			//Console.WriteLine(System.Environment.CurrentDirectory);

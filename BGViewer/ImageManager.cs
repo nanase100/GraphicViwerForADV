@@ -168,7 +168,6 @@ namespace GraphicViewer
 				if( diffImage == null )isDiff = false;
 			}
 
-
             try
             {
                 using (fs = File.OpenRead(baseName))
