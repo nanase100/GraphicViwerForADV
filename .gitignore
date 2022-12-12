@@ -1,6 +1,3 @@
-﻿################################################################################
-# この .gitignore ファイルは Microsoft(R) Visual Studio によって自動的に作成されました。
-################################################################################
-
+/.vs/BGViewer/FileContentIndex/ebf60cbc-c769-4217-8f1e-dd4e00971ccd.vsidx
 /.vs/BGViewer/FileContentIndex/read.lock
 /.vs/BGViewer/FileContentIndex/706d3197-9d93-4c02-b106-549eff047a09.vsidx
