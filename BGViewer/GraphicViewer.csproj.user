@@ -6,11 +6,12 @@
     <StartWorkingDirectory>D:\黒獣外伝\svn\_tool\背景GraphicViewer%28差分対応%29</StartWorkingDirectory>
     <RemoteDebugEnabled>false</RemoteDebugEnabled>
     <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
+    <StartAction>Project</StartAction>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <StartArguments>
     </StartArguments>
-    <StartWorkingDirectory>D:\真・恋姫†無双シリーズ\真・恋姫†無双革命 蜀\bin\_report\真・恋姫†夢想 革命 立ち絵用GraphicViewer</StartWorkingDirectory>
+    <StartWorkingDirectory>D:\黒獣外伝\svn\_tool\背景GraphicViewer</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup>
     <PublishUrlHistory>publish\</PublishUrlHistory>
