@@ -4,3 +4,5 @@
 /.vs/BGViewer/FileContentIndex
 /packages
 .vs
+obj
+/BGViewer/bin
