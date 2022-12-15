@@ -1,0 +1,16 @@
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\bin\Release\GraphicViewer.exe.config
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\bin\Release\GraphicViewer.exe
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\bin\Release\GraphicViewer.pdb
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\bin\Release\Newtonsoft.Json.dll
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\bin\Release\Newtonsoft.Json.xml
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Release\GraphicViewer.csproj.AssemblyReference.cache
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Release\GraphicViewer.csproj.SuggestedBindingRedirects.cache
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Release\GraphicViewer.Form1.resources
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Release\GraphicViewer.Form2.resources
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Release\GraphicViewer.folderStr.resources
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Release\GraphicViewer.Properties.Resources.resources
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Release\GraphicViewer.csproj.GenerateResource.cache
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Release\GraphicViewer.csproj.CoreCompileInputs.cache
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Release\GraphicViewer.csproj.CopyComplete
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Release\GraphicViewer.exe
+C:\Users\nanas\GitHub\GraphicViwerForADV\BGViewer\obj\x86\Release\GraphicViewer.pdb
