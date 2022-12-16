@@ -77,16 +77,15 @@ namespace GraphicViewer
 			Image		diffImage = null;
 
 			//差分化が必要かのチェックと前準備
-			if( baseName.IndexOf(" ") != -1 && baseName.IndexOf("hg3") != -1 )
+			if( baseName.IndexOf(",") != -1 && baseName.IndexOf("hg3") != -1 )
 			{
-				diffName = baseName.Replace(" ","_0");
-				baseName = baseName.Substring(0,baseName.IndexOf(" ")) + "_1.hg3";
+				diffName = baseName.Replace(",","_0");
+				baseName = baseName.Substring(0,baseName.IndexOf(",")) + "_1.hg3";
 				diffImage = (Image)m_susie.GetPicture(diffName);
 
 				isDiff = true;
 
 				if( diffImage == null )isDiff = false;
-
 			}
 
 			//----------------------------------------------------
