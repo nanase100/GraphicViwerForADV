@@ -522,18 +522,18 @@ namespace GraphicViewer
 
 			//リストの読み込み
 			Regex regIgnore = new Regex("^\t*([^\r\n\"]*?)[\t ]*//.*");
-			Regex regLine	= new Regex("^\t*([^\r\n\"]*?):[ \t]*([^\r\n\"]*)");																		//基本の顔グラ
-			Regex regLine2	= new Regex("^\t*([^\r\n\"]*?):[ \t]*([^\r\n\"]*?):[ \t]*\"([^\r\n\"]*)\"");												 //コピーストリング付きカオ
-			Regex regLine3	= new Regex("^\t*([^\r\n\"]*?):[ \t]*([^\r\n\"]*?):[ \t]*#(..)(..)(..)");																		  //基本の顔グラ
-			Regex regLine4	= new Regex("^\t*([^\r\n\"]*?):[ \t]*([^\r\n\"]*?):[ \t]*\"(.*)\":[ \t]*#(..)(..)(..)");												 //コピーストリング付きカオ
-			Regex regLine5	= new Regex("^\t*([^\r\n\"]*?):[ \t]*([^\r\n\"]*?):[ \t]*([^\r\n\"]*?):([^\r\n\"]*?):([^\r\n\"]*?):([^\r\n\"]*)");									//個別かお切り出し位置付き
-			Regex regLine6	= new Regex("^\t*([^\r\n\"]*?):[ \t]*([^\r\n\"]*?):[ \t]*([^\r\n\"]*?):([^\r\n\"]*?):([^\r\n\"]*?):([^\r\n\"]+?)][ \t]*\"([^\r\n\"]*)\"");			  //主にユーリス用 ファイル名ではなく、テキストを置き換え文に使用
+			Regex regLine	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*)");																		//基本の顔グラ
+			Regex regLine2	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*\"([^\r\n\"]*)\"");												 //コピーストリング付きカオ
+			Regex regLine3	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*#(..)(..)(..)");																		  //基本の顔グラ
+			Regex regLine4	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*\"(.*)\",[ \t]*#(..)(..)(..)");												 //コピーストリング付きカオ
+			Regex regLine5	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*)");									//個別かお切り出し位置付き
+			Regex regLine6	= new Regex("^\t*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),[ \t]*([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]*?),([^\r\n\"]+?)][ \t]*\"([^\r\n\"]*)\"");			  //主にユーリス用 ファイル名ではなく、テキストを置き換え文に使用
 
 			Regex regGenre						= new Regex("\t*※(.*)");
-			Regex regGenreRect					= new Regex("\t*※(.*):(.*):(.*):(.*)](.*)");												 //ジャンル名, 顔座標x, y, w, h		
-			Regex regGenreStrColor				= new Regex("\t*※(.*):#(..)(..)(..)");														 //ジャンル名, 文字色(#000000)
-			Regex regGenreRectColorExpand		= new Regex("\t*※(.*):(.*):(.*):(.*):(.*):#(..)(..)(..):(.*):(.*)");				  //ジャンル名, 顔座標x, y, w, h, 文字色(#000000), ツリーを開いおくフラグ, 大型サムネイル使用するか
-			Regex regGenreRectColorExpandPlus	= new Regex("\t*※(.*):(.*):(.*):(.*):(.*):#(..)(..)(..):(.*):(.*):(.*)");			//ジャンル名, 顔座標x, y, w, h, 文字色(#000000), ツリーを開いおくフラグ, 大型サムネイル使用するか、CCP構造を利用するか
+			Regex regGenreRect					= new Regex("\t*※(.*),(.*),(.*),(.*)](.*)");												 //ジャンル名, 顔座標x, y, w, h		
+			Regex regGenreStrColor				= new Regex("\t*※(.*),#(..)(..)(..)");														 //ジャンル名, 文字色(#000000)
+			Regex regGenreRectColorExpand		= new Regex("\t*※(.*),(.*),(.*),(.*),(.*),#(..)(..)(..),(.*),(.*)");				  //ジャンル名, 顔座標x, y, w, h, 文字色(#000000), ツリーを開いおくフラグ, 大型サムネイル使用するか
+			Regex regGenreRectColorExpandPlus	= new Regex("\t*※(.*),(.*),(.*),(.*),(.*),#(..)(..)(..),(.*),(.*),(.*)");			//ジャンル名, 顔座標x, y, w, h, 文字色(#000000), ツリーを開いおくフラグ, 大型サムネイル使用するか、CCP構造を利用するか
 
 			Regex regGenreSeparator = new Regex("\t*_※(.*)");
 
